@@ -23,9 +23,8 @@ export function initiateLineLogin() {
   // We use import.meta.env since we are in Vite
   const clientId = import.meta.env.VITE_LINE_CHANNEL_ID;
   const redirectUri = import.meta.env.VITE_LINE_CALLBACK_URL || (window.location.origin + '/#/callback');
-  
+
   if (!clientId || !redirectUri) {
-    alert(`[Debug] ไม่พบ VITE_LINE_CHANNEL_ID ในระบบ!\nclientId: ${clientId}\nredirectUri: ${redirectUri}\nกำลังสลับไปใช้โหมด Demo...`);
     loginWithProfile({
       userId: 'demo-farmer-001',
       displayName: 'เกษตรกรทดลอง',
@@ -35,14 +34,14 @@ export function initiateLineLogin() {
     window.location.hash = '#/dashboard';
     return;
   }
-  
+
   // Create a random state and store it in sessionStorage to mitigate CSRF attacks
   const state = Math.random().toString(36).substring(2, 15);
   sessionStorage.setItem('line_oauth_state', state);
 
   // Build the authorization URL
   const authUrl = `https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&scope=profile%20openid`;
-  
+
   // Redirect the browser to the LINE Login page
   window.location.href = authUrl;
 }

@@ -37,7 +37,10 @@ export async function initCallbackEvents() {
     try {
       // Exchange code for token using our custom Vite backend proxy
       const redirectUri = import.meta.env.VITE_LINE_CALLBACK_URL || (window.location.origin + '/#/callback');
-      const baseUrl = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
+      let baseUrl = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
+      if (baseUrl && !baseUrl.startsWith('http')) {
+        baseUrl = 'https://' + baseUrl;
+      }
       const response = await fetch(`${baseUrl}/api/auth/line?code=${code}&redirect_uri=${encodeURIComponent(redirectUri)}`);
       
       const data = await response.json();

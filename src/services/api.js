@@ -9,7 +9,10 @@ import { todayPrices, facilityPrices, historicalPrices, predictions, aiWarnings,
 import { transactions, reviews, getTransactionsByUserId, getReviewsByFacilityId } from '../data/mock-transactions.js';
 import { getDrafts } from '../utils/offline.js';
 
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
+let API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
+if (API_BASE_URL && !API_BASE_URL.startsWith('http')) {
+  API_BASE_URL = 'https://' + API_BASE_URL;
+}
 const LOCAL_TX_KEY = 'agriculturist_transactions';
 const LOCAL_REVIEW_KEY = 'agriculturist_reviews';
 
