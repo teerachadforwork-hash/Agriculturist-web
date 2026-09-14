@@ -48,6 +48,7 @@ services:
   - type: redis
     name: agriculturist-redis
     plan: free
+    ipAllowList: []
 
 databases:
   # 4. Database (PostgreSQL with PostGIS)
