@@ -22,7 +22,7 @@ export function getUser() {
 export function initiateLineLogin() {
   // We use import.meta.env since we are in Vite
   const clientId = import.meta.env.VITE_LINE_CHANNEL_ID;
-  const redirectUri = import.meta.env.VITE_LINE_CALLBACK_URL;
+  const redirectUri = import.meta.env.VITE_LINE_CALLBACK_URL || (window.location.origin + '/#/callback');
 
   if (!clientId || !redirectUri) {
     loginWithProfile({

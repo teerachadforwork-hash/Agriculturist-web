@@ -37,11 +37,15 @@ services:
     buildCommand: npm install && npm run build
     staticPublishPath: ./dist
     envVars:
-      - key: VITE_API_URL
+      - key: VITE_API_BASE_URL
         fromService:
           type: web
           name: agriculturist-backend
           property: host
+      - key: VITE_LINE_CHANNEL_ID
+        sync: false
+      - key: VITE_LINE_CALLBACK_URL
+        sync: false
 
   # 3. Cache (Redis)
   - type: redis
