@@ -23,6 +23,14 @@ export function setBeforeNavigate(hook) {
 }
 
 export function initRouter() {
+  // Fallback: If LINE redirected to the root URL (without hash) but has the OAuth query parameters,
+  // we forcefully append the #/callback hash so the app handles the token exchange.
+  if (window.location.search.includes('code=') && window.location.search.includes('state=')) {
+    if (!window.location.hash.includes('callback')) {
+      window.location.hash = '/callback';
+    }
+  }
+
   window.addEventListener('hashchange', handleRoute);
   window.addEventListener('load', handleRoute);
 }
