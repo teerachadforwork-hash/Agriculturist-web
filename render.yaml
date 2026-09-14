@@ -36,7 +36,6 @@ services:
     env: static
     buildCommand: npm install && npm run build
     staticPublishPath: ./dist
-    plan: free
     envVars:
       - key: VITE_API_URL
         fromService:
