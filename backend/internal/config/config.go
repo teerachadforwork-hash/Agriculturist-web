@@ -40,7 +40,7 @@ func Load() Config {
 		RedisURL:          getenv("REDIS_URL", "redis://localhost:6379/0"),
 		JWTSecret:         getenv("JWT_SECRET", "dev-only-change-me"),
 		JWTExpiry:         durationEnv("JWT_EXPIRY", 12*time.Hour),
-		CORSOrigins:       splitCSV(getenv("CORS_ORIGINS", "http://localhost:5173,http://localhost:8088")),
+		CORSOrigins:       splitCSV(getenv("CORS_ORIGINS", "http://localhost:5173,http://localhost:8088,https://*.onrender.com")),
 		LINEChannelID:     os.Getenv("LINE_CHANNEL_ID"),
 		LINEChannelSecret: os.Getenv("LINE_CHANNEL_SECRET"),
 		LINECallbackURL:   getenv("LINE_CALLBACK_URL", "http://localhost:5173/callback"),
