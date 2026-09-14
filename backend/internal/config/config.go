@@ -90,6 +90,9 @@ func splitCSV(v string) []string {
 	for _, p := range parts {
 		p = strings.TrimSpace(p)
 		if p != "" {
+			if !strings.HasPrefix(p, "http") && p != "*" {
+				p = "https://" + p
+			}
 			out = append(out, p)
 		}
 	}
