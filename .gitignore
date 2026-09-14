@@ -7,3 +7,4 @@ dist/
 backend/api
 backend/api.exe
 backend/data/
+deploy/env/production.env
