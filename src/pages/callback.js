@@ -41,7 +41,8 @@ export async function initCallbackEvents(params = {}) {
       if (baseUrl && !baseUrl.startsWith('http')) {
         baseUrl = 'https://' + baseUrl;
       }
-      const response = await fetch(`${baseUrl}/api/auth/line?code=${code}&redirect_uri=${encodeURIComponent(redirectUri)}`);
+      const targetUrl = `${baseUrl}/api/auth/line?code=${code}&redirect_uri=${encodeURIComponent(redirectUri)}`;
+      const response = await fetch(targetUrl);
       
       const data = await response.json();
       
@@ -55,7 +56,17 @@ export async function initCallbackEvents(params = {}) {
       }
     } catch (err) {
       console.error('Error during LINE token exchange:', err);
-      alert('Network or server error during authentication.\nMessage: ' + err.message + '\n\nเช็คที่ Render Backend ว่าตั้งค่า CORS_ORIGINS ถูกต้องหรือไม่');
+      
+      let fetchUrlInfo = "Unknown URL";
+      try {
+        let baseUrl = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
+        if (baseUrl && !baseUrl.startsWith('http')) {
+          baseUrl = 'https://' + baseUrl;
+        }
+        fetchUrlInfo = `${baseUrl}/api/auth/line`;
+      } catch (e) {}
+
+      alert('Network or server error during authentication.\nMessage: ' + err.message + '\nURL: ' + fetchUrlInfo + '\n\nถ้า URL ผิดแปลว่า Blueprint รันไม่สมบูรณ์ หรือลืม Sync ครับ');
       navigate('/login');
     }
   } else {
