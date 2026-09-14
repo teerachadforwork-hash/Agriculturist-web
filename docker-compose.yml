@@ -1,0 +1,132 @@
+services:
+  postgres:
+    image: postgis/postgis:16-3.5
+    environment:
+      POSTGRES_USER: agriculturist
+      POSTGRES_PASSWORD: agriculturist
+      POSTGRES_DB: agriculturist
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./scripts/backup:/backups
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U agriculturist -d agriculturist"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - miniodata:/data
+
+  api:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    command: ["/app/api"]
+    env_file:
+      - deploy/env/dev.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+
+  worker:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    command: ["/app/worker"]
+    env_file:
+      - deploy/env/dev.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: /api
+    ports:
+      - "8088:80"
+    depends_on:
+      - api
+
+  prometheus:
+    image: prom/prometheus:v3.2.1
+    volumes:
+      - ./deploy/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+    depends_on:
+      - api
+
+  grafana:
+    image: grafana/grafana:11.5.2
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - ./deploy/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./deploy/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    depends_on:
+      - prometheus
+
+  loki:
+    image: grafana/loki:3.4.2
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+
+  promtail:
+    image: grafana/promtail:3.4.2
+    volumes:
+      - ./deploy/promtail/promtail.yml:/etc/promtail/config.yml:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    command: -config.file=/etc/promtail/config.yml
+    depends_on:
+      - loki
+
+  backup:
+    image: postgis/postgis:16-3.5
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - deploy/env/dev.env
+    volumes:
+      - ./scripts:/scripts:ro
+      - ./scripts/backup:/backups
+    entrypoint: ["/bin/bash", "/scripts/backup-loop.sh"]
+
+volumes:
+  pgdata:
+  redisdata:
+  miniodata:

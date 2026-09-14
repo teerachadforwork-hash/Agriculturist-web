@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="th"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><title>AgriSmart เกษตรกรอัจฉริยะ</title><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;min-height:100%;}body{overscroll-behavior-y:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "tertiary-fixed-dim": "#94ccff", "on-surface": "#131b2e", "inverse-surface": "#283044", "secondary-fixed-dim": "#ffb68e", "background": "#faf8ff", "on-primary": "#ffffff", "tertiary-fixed": "#cde5ff", "on-background": "#131b2e", "on-surface-variant": "#3f493f", "surface-bright": "#faf8ff", "error": "#ba1a1a", "primary-fixed": "#95f8a7", "surface-tint": "#006d30", "surface-container": "#eaedff", "surface-container-lowest": "#ffffff", "on-tertiary-fixed": "#001d32", "on-primary-container": "#d3ffd5", "on-primary-fixed": "#00210a", "surface-container-highest": "#dae2fd", "outline": "#6f7a6e", "on-error": "#ffffff", "on-secondary": "#ffffff", "outline-variant": "#becabc", "on-secondary-fixed": "#331200", "secondary-container": "#fd8a42", "tertiary-container": "#2075ae", "on-primary-fixed-variant": "#005323", "tertiary": "#005c8e", "primary-container": "#15803d", "on-tertiary": "#ffffff", "surface-dim": "#d2d9f4", "on-tertiary-fixed-variant": "#004b74", "on-tertiary-container": "#eef5ff", "primary-fixed-dim": "#79db8d", "surface-variant": "#dae2fd", "on-secondary-container": "#682c00", "surface-container-high": "#e2e7ff", "on-error-container": "#93000a", "surface-container-low": "#f2f3ff", "primary": "#00652c", "secondary-fixed": "#ffdbca", "on-secondary-fixed-variant": "#763300", "inverse-on-surface": "#eef0ff", "surface": "#faf8ff", "secondary": "#9b4500", "inverse-primary": "#79db8d", "error-container": "#ffdad6" }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, spacing: { "space-xl": "1.5rem", "margin-desktop": "2rem", "space-md": "0.75rem", "space-2xl": "2rem", "space-lg": "1rem", "space-sm": "0.5rem", "margin-tablet": "1.5rem", "space-xs": "0.25rem", "gutter": "1rem", "margin": "1rem" }, fontFamily: { "headline-md": ["Be Vietnam Pro"], "label-badge": ["Space Grotesk"], "headline-sm": ["Be Vietnam Pro"], "body-lg": ["Be Vietnam Pro"], "label-numeric": ["Space Grotesk"], "body-sm": ["Be Vietnam Pro"], "headline-lg": ["Be Vietnam Pro"], "display-lg": ["Space Grotesk"], "body-md": ["Be Vietnam Pro"], "display-lg-mobile": ["Space Grotesk"], "caption": ["Be Vietnam Pro"] }, fontSize: { "headline-md": ["22px", { "lineHeight": "30px", "fontWeight": "600" }], "label-badge": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700" }], "headline-sm": ["18px", { "lineHeight": "26px", "fontWeight": "600" }], "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "500" }], "label-numeric": ["20px", { "lineHeight": "24px", "fontWeight": "700" }], "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }], "headline-lg": ["28px", { "lineHeight": "36px", "fontWeight": "700" }], "display-lg": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "body-md": ["15px", { "lineHeight": "22px", "fontWeight": "400" }], "display-lg-mobile": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" }], "caption": ["11px", { "lineHeight": "14px", "fontWeight": "500" }] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-body-md text-on-surface flex flex-col min-h-screen selection:bg-primary-fixed selection:text-on-primary-fixed"><header class="fixed top-0 inset-x-0 z-50 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] pt-safe"><div class="h-20 px-margin flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm min-w-0 flex-1"><img alt="AgriSmart Logo" class="h-8 w-auto object-contain flex-shrink-0" src="https://lh3.googleusercontent.com/aida/AEtjO1VEnNrjEtG8-bNq-0JZtLHiUBhZH4bXJDM2RcoVY0vfRHMwPtbv6J9Hq-PKV6ld7SdBIZnbb9VuohPAaAVzQ-QbXs26Y6qVrTovmN1bqTWEnqaGF-QjL81RsjcvyxcBL0_-mZyP8Xzf8j4RGEp5_izKNs3-IeK8XQ8_8WKCNF_1BOhOnofwMmzQ6Pt-JpbRXGL4a5_ewI_Y9npgo6TmlV42--04nLYkq5POcOoGct39DK-0tw8FsV82CY_V"/><div class="flex flex-col min-w-0"><div class="flex items-center gap-space-xs"><span class="font-headline-sm text-headline-sm text-primary font-bold truncate leading-none">AgriSmart</span><span class="text-[11px] font-medium text-on-surface-variant leading-none hidden sm:inline">เกษตรกรอัจฉริยะ</span></div><div class="flex items-center gap-1.5 mt-1"><span class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></span><span class="font-caption text-caption text-on-surface-variant truncate">ออนไลน์ 4G / พร้อมบันทึกร่าง</span></div></div></div><div class="flex items-center gap-space-xs flex-shrink-0 pl-space-xs"><div class="flex flex-col items-end min-w-0 max-w-[120px]"><span class="font-body-sm text-body-sm font-semibold text-on-surface truncate leading-tight">สมเกียรติ สว่างดี</span><div class="flex items-center gap-1 leading-none"><span class="w-1.5 h-1.5 rounded-full bg-[#06C755]"></span><span class="font-caption text-[10px] text-on-surface-variant font-medium">LINE ยืนยัน</span></div></div><div class="relative flex-shrink-0"><img alt="Profile" class="w-8 h-8 rounded-full object-cover ring-1 ring-outline-variant/40" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCY9CXe7RsiKGzQp5gvUMBZfZZ6kCD8PKEQnkEWJHfy_YvHubU1M56_nWYe2ZTXCGrPoudOhJaC47Z3MXNRSZHPOqQByDFhndZV2mKlJWe7mLEZzEoeRxud-I7musfcjQSnQkURg4H5sdvQFpI6p4oeJLUSqvI_FyXp-XDqREEh_qFD1mPbL0npxfHl2xPtyeTUWERX27cyH2ikiS4Ck18L7G3s7NXd_rwrboQUoFZYfaJ7Oq0EqMsPgA"/><span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-primary ring-1 ring-surface"></span></div></div></div></header><main class="flex-1 flex flex-col relative w-full pt-20 pb-24 px-margin bg-surface max-w-xl mx-auto"><div class="flex flex-col w-full space-y-space-md">
+<!-- Status / Offline Ready Banner -->
+<div class="bg-surface-container-high text-on-surface rounded-xl p-space-md shadow-sm flex items-center justify-between">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[18px]">cloud_done</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-body-sm text-body-sm font-bold text-on-surface truncate">บันทึกออฟไลน์พร้อมใช้งาน</span>
+<span class="font-caption text-caption text-on-surface-variant truncate">ราคากลาง DIT ล่าสุด: วันนี้ 08:30 น. (แม่นยำสูง)</span>
+</div>
+</div>
+<span class="font-label-badge text-label-badge bg-primary-fixed text-on-primary-fixed px-2 py-0.5 rounded-full flex-shrink-0">ONLINE 4G</span>
+</div>
+<!-- Crop Category Horizontal Selector -->
+<div class="flex flex-col space-y-space-xs">
+<label class="font-body-sm text-body-sm font-bold text-on-surface flex items-center justify-between">
+<span>เลือกชนิดพืชผลเกษตร</span>
+<span class="font-caption text-caption text-primary flex items-center gap-1 font-semibold">
+<span class="material-symbols-outlined text-[14px]">info</span>สูตรหักชื้น กรมการค้าภายใน
+      </span>
+</label>
+<div class="grid grid-cols-3 gap-space-xs bg-surface-container-low p-1.5 rounded-xl">
+<button class="crop-btn active-crop py-2.5 px-2 rounded-lg flex flex-col items-center justify-center transition-all duration-150 bg-primary text-on-primary shadow-sm" id="btn-crop-rice" onclick="switchCrop('rice')" type="button">
+<span class="material-symbols-outlined text-[22px] mb-0.5" style="font-variation-settings: 'FILL' 1;">eco</span>
+<span class="font-body-sm text-body-sm font-bold leading-none text-center">ข้าวเปลือก</span>
+<span class="font-caption text-[10px] opacity-90 mt-0.5">หอมมะลิ (15%)</span>
+</button>
+<button class="crop-btn py-2.5 px-2 rounded-lg flex flex-col items-center justify-center transition-all duration-150 bg-surface-container-lowest text-on-surface hover:bg-surface-container" id="btn-crop-cassava" onclick="switchCrop('cassava')" type="button">
+<span class="material-symbols-outlined text-[22px] mb-0.5 text-secondary">nutrition</span>
+<span class="font-body-sm text-body-sm font-bold leading-none text-center">มันสำปะหลัง</span>
+<span class="font-caption text-[10px] text-on-surface-variant mt-0.5">เชื้อแป้ง 25%</span>
+</button>
+<button class="crop-btn py-2.5 px-2 rounded-lg flex flex-col items-center justify-center transition-all duration-150 bg-surface-container-lowest text-on-surface hover:bg-surface-container" id="btn-crop-cane" onclick="switchCrop('cane')" type="button">
+<span class="material-symbols-outlined text-[22px] mb-0.5 text-tertiary">grass</span>
+<span class="font-body-sm text-body-sm font-bold leading-none text-center">อ้อยโรงงาน</span>
+<span class="font-caption text-[10px] text-on-surface-variant mt-0.5">ค่าความหวาน C.C.S.</span>
+</button>
+</div>
+</div>
+<!-- Visual Hero Photo Card for Crop Confidence -->
+<div class="relative w-full rounded-2xl overflow-hidden bg-surface-container shadow-sm h-36">
+<img class="w-full h-full object-cover" data-alt="A lush Thai rice field during golden harvest season with modern moisture measuring sensor placed on wooden tractor plank, bright clear daylight, vivid greens and amber grain hues, high contrast outdoor photography" id="crop-hero-image" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDF33Ll-e5-8cby5xDLkjPDAeeTCsoAamkPsoEteOyNnxYqpDSdFUrct-6nU4gcHOm-GFrfPE4IEu0sn1F0PEoNnETGqPRNt0MSdetuiyWuReHf44y_5ShSGghLO7dGkY9M23vIYSlJcptS_5SiUswKG2FLnWKRZHKsVQ6DjvPCoznigk1pCWfJ80sQQEh6HuixEaXCWznYFqMkwvTn6XMYu9a9HtW-juQx40Jbep2U2_o8pk2Bh2P-cA"/>
+<div class="absolute inset-0 bg-gradient-to-t from-inverse-surface/90 via-inverse-surface/30 to-transparent flex items-end p-space-md">
+<div class="flex items-center justify-between w-full text-surface">
+<div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-primary-fixed">verified</span>
+<span class="font-headline-sm text-headline-sm text-surface font-bold" id="crop-hero-title">ข้าวหอมมะลิสด ฤดูกาล 67/68</span>
+</div>
+<p class="font-caption text-caption text-surface-container-high" id="crop-hero-sub">เกณฑ์หักความชื้นมาตรฐาน: ความชื้นเกิน 15% หัก 1.5% ต่อหน่วย</p>
+</div>
+<div class="bg-surface-container-lowest/20 backdrop-blur-md px-2.5 py-1.5 rounded-lg text-right">
+<span class="font-caption text-[10px] text-surface-container-high block">ราคากลางอ้างอิง DIT</span>
+<span class="font-label-badge text-label-badge text-primary-fixed" id="crop-ref-price-badge">฿14,800/ตัน</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Primary Inputs Matrix (Built for Outdoor Glare / Thick Touch Fingers) -->
+<div class="bg-surface-container-lowest rounded-2xl p-space-md shadow-sm space-y-space-md">
+<!-- Input 1: Total Harvest Weight -->
+<div class="space-y-1.5">
+<div class="flex items-center justify-between">
+<label class="font-body-sm text-body-sm font-bold text-on-surface flex items-center gap-1.5" for="input-weight">
+<span class="material-symbols-outlined text-[18px] text-primary">scale</span>
+<span>น้ำหนักชั่งรวม (Gross Weight)</span>
+</label>
+<span class="font-caption text-caption text-on-surface-variant font-medium">รวมรถชั่งหักตัวถังแล้ว</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="relative flex-1">
+<input class="w-full h-14 bg-surface-container-low text-on-surface font-display-lg-mobile text-display-lg-mobile px-space-md rounded-xl outline-none focus:bg-surface-container font-bold transition-all text-left" id="input-weight" oninput="calculateRealtime()" step="50" type="number" value="12500"/>
+<span class="absolute right-4 top-1/2 -translate-y-1/2 font-body-sm text-body-sm font-bold text-on-surface-variant">กก.</span>
+</div>
+<div class="flex flex-col gap-1 w-24">
+<button class="h-[26px] bg-surface-container text-on-surface rounded-lg font-bold text-[13px] flex items-center justify-center active:bg-surface-container-high" onclick="adjustWeight(500)" type="button">+500</button>
+<button class="h-[26px] bg-surface-container text-on-surface rounded-lg font-bold text-[13px] flex items-center justify-center active:bg-surface-container-high" onclick="adjustWeight(-500)" type="button">-500</button>
+</div>
+</div>
+<div class="flex items-center justify-between px-1">
+<span class="font-caption text-caption text-primary font-semibold" id="label-ton-equivalent">เท่ากับ 12.50 ตัน</span>
+<span class="font-caption text-caption text-on-surface-variant">มาตรฐานชั่งผ่านดิจิทัล</span>
+</div>
+</div>
+<!-- Input 2: Moisture / Quality Percentage -->
+<div class="space-y-1.5">
+<div class="flex items-center justify-between">
+<label class="font-body-sm text-body-sm font-bold text-on-surface flex items-center gap-1.5" for="input-moisture" id="label-quality-param">
+<span class="material-symbols-outlined text-[18px] text-secondary">water_drop</span>
+<span>ความชื้นที่วัดได้จริง (%)</span>
+</label>
+<span class="font-label-badge text-label-badge bg-secondary-fixed text-on-secondary-fixed px-2 py-0.5 rounded-full font-bold" id="badge-quality-delta">เกินเกณฑ์ +7.0%</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="relative flex-1">
+<input class="w-full h-14 bg-surface-container-low text-on-surface font-display-lg-mobile text-display-lg-mobile px-space-md rounded-xl outline-none focus:bg-surface-container font-bold transition-all text-left" id="input-moisture" oninput="calculateRealtime()" step="0.5" type="number" value="22.0"/>
+<span class="absolute right-4 top-1/2 -translate-y-1/2 font-body-sm text-body-sm font-bold text-on-surface-variant" id="input-unit-symbol">%</span>
+</div>
+<!-- Stepper tactile controls -->
+<div class="flex items-center gap-1">
+<button class="w-12 h-14 bg-surface-container text-on-surface rounded-xl font-headline-md text-headline-md flex items-center justify-center active:bg-surface-container-highest shadow-sm select-none" onclick="adjustMoisture(-0.5)" type="button">-</button>
+<button class="w-12 h-14 bg-surface-container text-on-surface rounded-xl font-headline-md text-headline-md flex items-center justify-center active:bg-surface-container-highest shadow-sm select-none" onclick="adjustMoisture(0.5)" type="button">+</button>
+</div>
+</div>
+<!-- Moisture Slider Helper for Fast Thumb Drag -->
+<div class="pt-1">
+<input class="w-full accent-primary h-2 bg-surface-container rounded-lg appearance-none cursor-pointer" id="slider-moisture" max="30.0" min="12.0" oninput="syncSlider(this.value)" step="0.5" type="range" value="22.0"/>
+<div class="flex justify-between font-caption text-[11px] text-on-surface-variant mt-1">
+<span>12.0% (แห้งมาก)</span>
+<span class="font-bold text-primary">15.0% (เกณฑ์มาตรฐาน)</span>
+<span>25.0%+ (ชื้นสูง)</span>
+</div>
+</div>
+</div>
+<!-- Input 3: Base Market Reference Price -->
+<div class="space-y-1.5">
+<div class="flex items-center justify-between">
+<label class="font-body-sm text-body-sm font-bold text-on-surface flex items-center gap-1.5" for="input-base-price">
+<span class="material-symbols-outlined text-[18px] text-tertiary">monetization_on</span>
+<span>ราคารับซื้ออ้างอิง (บาท/ตัน)</span>
+</label>
+<span class="font-caption text-caption text-tertiary font-bold cursor-pointer" onclick="resetToDitPrice()">รีเซ็ตราคากลาง DIT</span>
+</div>
+<div class="relative">
+<input class="w-full h-14 bg-surface-container-low text-on-surface font-headline-lg text-headline-lg px-space-md rounded-xl outline-none focus:bg-surface-container font-bold transition-all text-left" id="input-base-price" oninput="calculateRealtime()" step="100" type="number" value="14800"/>
+<div class="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-1">
+<span class="font-body-sm text-body-sm font-bold text-on-surface-variant">บาท/ตัน</span>
+<span class="font-caption text-caption text-on-surface-variant bg-surface-container px-1.5 py-0.5 rounded">14.80 ฿/กก.</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Real-Time Financial Summary Calculation Hero Box -->
+<div class="bg-surface-container-lowest rounded-2xl p-space-md shadow-md space-y-space-md overflow-hidden relative">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-lg bg-primary-container text-on-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">calculate</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm font-bold text-on-surface">ผลการประเมินราคาตามเกณฑ์หัก</h3>
+</div>
+<span class="font-label-badge text-label-badge bg-surface-container text-on-surface-variant px-2 py-0.5 rounded">คำนวณสด</span>
+</div>
+<!-- The Big Green Net Payout Display Card -->
+<div class="bg-primary-fixed/25 rounded-xl p-space-md space-y-1 text-center shadow-sm">
+<span class="font-caption text-caption font-semibold text-on-surface-variant uppercase tracking-wider">มูลค่าสุทธิประเมินที่จะได้รับ (Net Payout)</span>
+<div class="font-display-lg-mobile text-display-lg-mobile font-bold text-primary tracking-tight leading-none py-1" id="res-total-payout">
+        ฿165,575
+      </div>
+<div class="flex items-center justify-center gap-2 pt-1">
+<span class="font-body-sm text-body-sm font-bold text-on-surface" id="res-average-price">เฉลี่ย 13.25 บาท/กก. สด</span>
+<span class="font-caption text-caption bg-surface-container-lowest/80 text-on-surface-variant px-2 py-0.5 rounded-full font-medium" id="res-loss-rate">หักชื้น 10.50%</span>
+</div>
+</div>
+<!-- Line Item Breakdown Table -->
+<div class="space-y-2.5 font-body-sm text-body-sm text-on-surface pt-1">
+<div class="flex items-center justify-between pb-2 bg-surface-container-low/50 p-2 rounded-lg">
+<span class="text-on-surface-variant flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">hourglass_bottom</span>
+<span id="res-param-excess-label">ความชื้นส่วนเกินเกณฑ์ (มาตรฐาน 15%)</span>
+</span>
+<span class="font-bold text-secondary" id="res-excess-val">+7.0%</span>
+</div>
+<div class="flex items-center justify-between pb-2 bg-surface-container-low/50 p-2 rounded-lg">
+<span class="text-on-surface-variant flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-error">trending_down</span>
+<span>น้ำหนักที่ถูกหักลดตามสูตร</span>
+</span>
+<div class="text-right">
+<span class="font-bold text-error block" id="res-weight-deducted">-1,312.50 กก.</span>
+<span class="font-caption text-[11px] text-on-surface-variant" id="res-deduct-percentage">(สูตรหัก 10.50%)</span>
+</div>
+</div>
+<div class="flex items-center justify-between pb-2 bg-surface-container-low/50 p-2 rounded-lg">
+<span class="text-on-surface-variant flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-primary">inventory_2</span>
+<span>น้ำหนักสุทธิส่งมอบประเมินได้</span>
+</span>
+<div class="text-right">
+<span class="font-bold text-on-surface block" id="res-net-weight">11,187.50 กก.</span>
+<span class="font-caption text-[11px] text-primary font-semibold" id="res-net-tons">(11.19 ตัน)</span>
+</div>
+</div>
+<div class="flex items-center justify-between pb-2 bg-surface-container-low/50 p-2 rounded-lg">
+<span class="text-on-surface-variant flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-tertiary">local_shipping</span>
+<span>คาดการณ์ค่าขนส่งเฉลี่ย (รัศมี 30 กม.)</span>
+</span>
+<span class="font-bold text-on-surface" id="res-est-transport">-฿3,750 บาท</span>
+</div>
+</div>
+<!-- Crop Specific Quality Formula Explanation Card -->
+<div class="bg-surface-container p-space-md rounded-xl space-y-1" id="crop-formula-card">
+<div class="flex items-center gap-1.5 font-body-sm text-body-sm font-bold text-on-surface">
+<span class="material-symbols-outlined text-[16px] text-primary">menu_book</span>
+<span id="formula-title">เกณฑ์สูตรคำนวณข้าวหอมมะลิ (DIT):</span>
+</div>
+<p class="font-caption text-caption text-on-surface-variant leading-relaxed" id="formula-desc">
+        ความชื้น 15.0% - 25.0% หักน้ำหนัก 1.5% ต่อน้ำหนักข้าวเปลือกทุกๆ 1% ความชื้นที่เกิน หากความชื้นเกิน 25.0% ให้หักเพิ่มเป็น 2.0% ต่อ 1% ความชื้นส่วนเกิน
+      </p>
+</div>
+</div>
+<!-- GIS Mill Matcher Quick Launch Widget -->
+<div class="bg-surface-container-lowest rounded-2xl p-space-md shadow-sm space-y-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-lg bg-tertiary-container text-on-tertiary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">near_me</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm font-bold text-on-surface">ค้นหาลานรับซื้อรอบตัว</h3>
+</div>
+<!-- Distance Radius Selector -->
+<div class="flex items-center gap-1 bg-surface-container-low p-1 rounded-lg">
+<button class="radius-btn px-2 py-0.5 text-caption font-bold rounded text-on-surface-variant hover:text-on-surface" onclick="setRadius(15, this)" type="button">15 กม.</button>
+<button class="radius-btn active-radius px-2 py-0.5 text-caption font-bold rounded bg-tertiary text-on-tertiary shadow-sm" onclick="setRadius(30, this)" type="button">30 กม.</button>
+<button class="radius-btn px-2 py-0.5 text-caption font-bold rounded text-on-surface-variant hover:text-on-surface" onclick="setRadius(50, this)" type="button">50 กม.</button>
+</div>
+</div>
+<!-- Mini GIS Map Preview Container -->
+<div class="w-full h-32 bg-cover bg-center rounded-xl relative overflow-hidden shadow-inner flex items-end p-2.5" data-location="Roi Et, Thailand" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCxsLAczX-0RvXJmODB-gkICe2nzw-jl2kQ8D0uWrqb37edwdYvaLfGGlW4cfTV24lSHKoZJuaj7-8AChmteLBSLut1hqzGu2_F0x35jYG6jqajGRNCKBjdnoyAbSetb37tSkzV2I4OMHBtdZ32Cw7WcWFApwu9DmsSobqegAEUwECVg5qdOfvAnW2sr-zSWCpOnZUt23r-CZy1SO-jZXOQ4s5-QOioBJJgfHAWHhERagDI7dDsTU5BSQ');">
+<div class="bg-surface/90 backdrop-blur-md px-3 py-1.5 rounded-lg flex items-center justify-between w-full shadow-sm">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-primary animate-ping"></span>
+<span class="font-caption text-caption font-bold text-on-surface">พบ 4 ลานรับซื้อที่เปิดรับขณะนี้</span>
+</div>
+<span class="font-caption text-[10px] text-tertiary font-bold">ระยะใกล้สุด 8.4 กม.</span>
+</div>
+</div>
+<!-- Top Recommended Mill Tile -->
+<div class="bg-surface-container-low rounded-xl p-3 flex items-center justify-between">
+<div class="flex items-center gap-2.5 min-w-0">
+<div class="w-10 h-10 rounded-xl bg-primary-fixed text-on-primary-fixed flex items-center justify-center flex-shrink-0 font-bold font-display-lg-mobile text-[18px]">
+          1
+        </div>
+<div class="min-w-0">
+<div class="flex items-center gap-1">
+<span class="font-body-sm text-body-sm font-bold text-on-surface truncate">สหกรณ์การเกษตรเกษตรวิสัย</span>
+<span class="material-symbols-outlined text-[14px] text-primary">verified</span>
+</div>
+<span class="font-caption text-caption text-on-surface-variant truncate block">รับซื้อ 14,950 ฿/ตัน • คิวรอประมาณ 3 คัน (25 นาที)</span>
+</div>
+</div>
+<a class="h-9 px-3 bg-surface-container text-on-surface rounded-lg font-body-sm text-[13px] font-bold flex items-center gap-1 flex-shrink-0 active:bg-surface-container-high" href="#">
+<span>โทร</span>
+<span class="material-symbols-outlined text-[16px]">call</span>
+</a>
+</div>
+<!-- GIS Action Callout Button -->
+<button class="w-full h-12 bg-tertiary hover:bg-tertiary/90 active:bg-tertiary text-on-tertiary rounded-xl font-body-md text-body-md font-bold flex items-center justify-center gap-2 shadow-sm transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px]">explore</span>
+<span>ดูพิกัดเปรียบเทียบกำไรสุทธิทุกแห่ง (GIS)</span>
+</button>
+</div>
+<!-- Secondary Actions & Draft Record Bar -->
+<div class="pt-space-xs pb-space-lg space-y-space-sm">
+<button class="w-full h-14 bg-primary text-on-primary rounded-2xl font-headline-sm text-headline-sm font-bold flex items-center justify-center gap-2 shadow-md active:bg-primary-container transition-all" id="btn-save-draft" onclick="saveDraft()" type="button">
+<span class="material-symbols-outlined text-[22px]">save</span>
+<span>บันทึกร่างผลผลิตล็อตนี้</span>
+</button>
+<div class="flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">lock</span>
+<span class="font-caption text-caption text-on-surface-variant">ข้อมูลบันทึกในเครื่องทันที และจะซิงก์สู่ระบบกลางเมื่อต่อเน็ต</span>
+</div>
+</div>
+</div>
+<script>
+  let currentCrop = 'rice';
+  let activeRadius = 30;
+
+  const cropConfigs = {
+    rice: {
+      title: 'ข้าวหอมมะลิสด ฤดูกาล 67/68',
+      sub: 'เกณฑ์หักความชื้นมาตรฐาน: ความชื้นเกิน 15% หัก 1.5% ต่อหน่วย',
+      refPrice: 14800,
+      priceBadge: '฿14,800/ตัน',
+      qualityParamName: 'ความชื้นที่วัดได้จริง (%)',
+      qualityDefault: 22.0,
+      standardQuality: 15.0,
+      qualityUnit: '%',
+      sliderMin: 12.0,
+      sliderMax: 30.0,
+      excessLabel: 'ความชื้นส่วนเกินเกณฑ์ (มาตรฐาน 15%)',
+      formulaTitle: 'เกณฑ์สูตรคำนวณข้าวหอมมะลิ (DIT):',
+      formulaDesc: 'ความชื้น 15.0% - 25.0% หักน้ำหนัก 1.5% ต่อน้ำหนักข้าวเปลือกทุกๆ 1% ความชื้นที่เกิน หากความชื้นเกิน 25.0% ให้หักเพิ่มเป็น 2.0% ต่อ 1% ความชื้นส่วนเกิน'
+    },
+    cassava: {
+      title: 'มันสำปะหลังสด (เชื้อแป้ง)',
+      sub: 'เกณฑ์ราคาอ้างอิงเชื้อแป้งมาตรฐาน 25% (±0.10 บาท ต่อ 1% เชื้อแป้ง)',
+      refPrice: 3200,
+      priceBadge: '฿3,200/ตัน',
+      qualityParamName: 'เปอร์เซ็นต์เชื้อแป้งที่วัดได้ (%)',
+      qualityDefault: 27.0,
+      standardQuality: 25.0,
+      qualityUnit: '%',
+      sliderMin: 18.0,
+      sliderMax: 32.0,
+      excessLabel: 'ผลต่างเชื้อแป้งจากเกณฑ์ (มาตรฐาน 25%)',
+      formulaTitle: 'สูตรหัก-เพิ่มเชื้อแป้งมันสำปะหลัง:',
+      formulaDesc: 'ฐานแป้ง 25% เป็นเกณฑ์มาตรฐาน แป้งเพิ่มหรือลด 1% ปรับราคาบวก/ลบ 10 สตางค์ต่อกิโลกรัม (100 บาท/ตัน) ตามประกาศสมาคมแป้งมัน'
+    },
+    cane: {
+      title: 'อ้อยสดส่งโรงงานน้ำตาล',
+      sub: 'เกณฑ์มาตรฐานความหวาน 10 C.C.S. (ปรับ ±53.40 บาท ต่อ 1 C.C.S.)',
+      refPrice: 1420,
+      priceBadge: '฿1,420/ตัน',
+      qualityParamName: 'ค่าความหวานที่ตรวจได้ (C.C.S.)',
+      qualityDefault: 11.5,
+      standardQuality: 10.0,
+      qualityUnit: 'C.C.S.',
+      sliderMin: 7.0,
+      sliderMax: 15.0,
+      excessLabel: 'ความหวานต่างจากเกณฑ์ (ฐาน 10 C.C.S.)',
+      formulaTitle: 'สูตรประเมินอ้อยโรงงาน (สอน. / กอน.):',
+      formulaDesc: 'คำนวณค่าอ้อยขั้นต้น ความหวาน 10 C.C.S. เป็นเกณฑ์ หากความหวานสูงกว่าเกณฑ์ จะได้เงินเพิ่ม 53.40 บาท/ตัน ต่อ 1 หน่วย C.C.S.'
+    }
+  };
+
+  function switchCrop(crop) {
+    currentCrop = crop;
+    const config = cropConfigs[crop];
+
+    // Toggle button appearances
+    ['rice', 'cassava', 'cane'].forEach(c => {
+      const btn = document.getElementById('btn-crop-' + c);
+      if (c === crop) {
+        btn.className = 'crop-btn py-2.5 px-2 rounded-lg flex flex-col items-center justify-center transition-all duration-150 bg-primary text-on-primary shadow-sm';
+      } else {
+        btn.className = 'crop-btn py-2.5 px-2 rounded-lg flex flex-col items-center justify-center transition-all duration-150 bg-surface-container-lowest text-on-surface hover:bg-surface-container';
+      }
+    });
+
+    // Update Header Hero Text
+    document.getElementById('crop-hero-title').innerText = config.title;
+    document.getElementById('crop-hero-sub').innerText = config.sub;
+    document.getElementById('crop-ref-price-badge').innerText = config.priceBadge;
+
+    // Update Field labels & config values
+    document.getElementById('label-quality-param').innerHTML = `<span class="material-symbols-outlined text-[18px] text-secondary">tune</span><span>${config.qualityParamName}</span>`;
+    document.getElementById('input-unit-symbol').innerText = config.qualityUnit;
+    
+    // Set Slider attributes
+    const slider = document.getElementById('slider-moisture');
+    slider.min = config.sliderMin;
+    slider.max = config.sliderMax;
+    slider.value = config.qualityDefault;
+
+    // Set Default Quality Input & Price
+    document.getElementById('input-moisture').value = config.qualityDefault.toFixed(1);
+    document.getElementById('input-base-price').value = config.refPrice;
+
+    // Formula card
+    document.getElementById('formula-title').innerText = config.formulaTitle;
+    document.getElementById('formula-desc').innerText = config.formulaDesc;
+    document.getElementById('res-param-excess-label').innerText = config.excessLabel;
+
+    calculateRealtime();
+  }
+
+  function adjustWeight(delta) {
+    const input = document.getElementById('input-weight');
+    let val = parseFloat(input.value) || 0;
+    val = Math.max(100, val + delta);
+    input.value = val;
+    calculateRealtime();
+  }
+
+  function adjustMoisture(delta) {
+    const input = document.getElementById('input-moisture');
+    let val = parseFloat(input.value) || 0;
+    val = Math.max(1, +(val + delta).toFixed(1));
+    input.value = val.toFixed(1);
+    document.getElementById('slider-moisture').value = val;
+    calculateRealtime();
+  }
+
+  function syncSlider(val) {
+    document.getElementById('input-moisture').value = parseFloat(val).toFixed(1);
+    calculateRealtime();
+  }
+
+  function resetToDitPrice() {
+    const config = cropConfigs[currentCrop];
+    document.getElementById('input-base-price').value = config.refPrice;
+    calculateRealtime();
+  }
+
+  function setRadius(km, el) {
+    activeRadius = km;
+    document.querySelectorAll('.radius-btn').forEach(btn => {
+      btn.className = 'radius-btn px-2 py-0.5 text-caption font-bold rounded text-on-surface-variant hover:text-on-surface';
+    });
+    el.className = 'radius-btn active-radius px-2 py-0.5 text-caption font-bold rounded bg-tertiary text-on-tertiary shadow-sm';
+    calculateRealtime();
+  }
+
+  function calculateRealtime() {
+    const weight = parseFloat(document.getElementById('input-weight').value) || 0;
+    const qualityVal = parseFloat(document.getElementById('input-moisture').value) || 0;
+    const basePricePerTon = parseFloat(document.getElementById('input-base-price').value) || 0;
+
+    // Update Ton sublabel
+    const tons = (weight / 1000).toFixed(2);
+    document.getElementById('label-ton-equivalent').innerText = `เท่ากับ ${tons} ตัน`;
+
+    const config = cropConfigs[currentCrop];
+    const diff = qualityVal - config.standardQuality;
+
+    let deltaBadgeText = '';
+    let netWeight = weight;
+    let deductedWeight = 0;
+    let netPayout = 0;
+    let avgPerKg = 0;
+    let deductPercent = 0;
+
+    if (currentCrop === 'rice') {
+      // Standard 15%, 1.5% deduction per 1% excess moisture
+      if (diff > 0) {
+        deductPercent = +(diff * 1.5).toFixed(2);
+        deductedWeight = weight * (deductPercent / 100);
+        netWeight = weight - deductedWeight;
+        deltaBadgeText = `เกินเกณฑ์ +${diff.toFixed(1)}%`;
+      } else {
+        deductPercent = 0;
+        deductedWeight = 0;
+        netWeight = weight;
+        deltaBadgeText = `มาตรฐาน (${qualityVal.toFixed(1)}%)`;
+      }
+      netPayout = (netWeight / 1000) * basePricePerTon;
+      avgPerKg = weight > 0 ? (netPayout / weight) : 0;
+
+      document.getElementById('res-excess-val').innerText = diff > 0 ? `+${diff.toFixed(1)}%` : `0.0%`;
+      document.getElementById('res-weight-deducted').innerText = `-${deductedWeight.toLocaleString('th-TH', {minimumFractionDigits: 2, maximumFractionDigits: 2})} กก.`;
+      document.getElementById('res-deduct-percentage').innerText = `(สูตรหัก ${deductPercent.toFixed(2)}%)`;
+      document.getElementById('res-loss-rate').innerText = `หักชื้น ${deductPercent.toFixed(2)}%`;
+    } 
+    else if (currentCrop === 'cassava') {
+      // Standard starch 25%, ±0.10 THB per kg (100 THB/ton per 1% starch)
+      const priceAdjPerTon = diff * 100;
+      const adjustedPricePerTon = Math.max(500, basePricePerTon + priceAdjPerTon);
+      netWeight = weight;
+      deductedWeight = 0;
+      netPayout = (netWeight / 1000) * adjustedPricePerTon;
+      avgPerKg = weight > 0 ? (netPayout / weight) : 0;
+
+      deltaBadgeText = diff >= 0 ? `สูงกว่าเกณฑ์ +${diff.toFixed(1)}%` : `ต่ำกว่าเกณฑ์ ${diff.toFixed(1)}%`;
+      document.getElementById('res-excess-val').innerText = `${diff >= 0 ? '+' : ''}${diff.toFixed(1)}%`;
+      document.getElementById('res-weight-deducted').innerText = diff >= 0 ? `+฿${(diff * 100).toFixed(0)}/ตัน (พรีเมียม)` : `-฿${Math.abs(diff * 100).toFixed(0)}/ตัน (หักแป้ง)`;
+      document.getElementById('res-deduct-percentage').innerText = `(ราคาปรับเป็น ฿${adjustedPricePerTon.toLocaleString('th-TH')}/ตัน)`;
+      document.getElementById('res-loss-rate').innerText = diff >= 0 ? `โบนัสแป้ง +${(diff*0.1).toFixed(2)}฿/กก.` : `หักแป้ง ${(diff*0.1).toFixed(2)}฿/กก.`;
+    } 
+    else if (currentCrop === 'cane') {
+      // Cane standard 10 CCS, ±53.40 THB per ton per 1 CCS
+      const priceAdjPerTon = diff * 53.40;
+      const adjustedPricePerTon = Math.max(200, basePricePerTon + priceAdjPerTon);
+      netWeight = weight;
+      deductedWeight = 0;
+      netPayout = (netWeight / 1000) * adjustedPricePerTon;
+      avgPerKg = weight > 0 ? (netPayout / weight) : 0;
+
+      deltaBadgeText = diff >= 0 ? `หวานกว่าเกณฑ์ +${diff.toFixed(1)} CCS` : `ต่ำกว่าเกณฑ์ ${diff.toFixed(1)} CCS`;
+      document.getElementById('res-excess-val').innerText = `${diff >= 0 ? '+' : ''}${diff.toFixed(1)} CCS`;
+      document.getElementById('res-weight-deducted').innerText = diff >= 0 ? `+฿${(diff * 53.4).toFixed(1)}/ตัน` : `-฿${Math.abs(diff * 53.4).toFixed(1)}/ตัน`;
+      document.getElementById('res-deduct-percentage').innerText = `(ราคาตาม CCS ฿${adjustedPricePerTon.toFixed(2)}/ตัน)`;
+      document.getElementById('res-loss-rate').innerText = `${diff >= 0 ? '+' : ''}${(diff*53.4).toFixed(0)} บาท/ตัน`;
+    }
+
+    // Est. Transport based on weight and active radius
+    const estTransportCost = Math.round((weight / 1000) * activeRadius * 10);
+    document.getElementById('res-est-transport').innerText = `-฿${estTransportCost.toLocaleString('th-TH')} บาท`;
+
+    // Update Net Payout Displays
+    document.getElementById('badge-quality-delta').innerText = deltaBadgeText;
+    document.getElementById('res-total-payout').innerText = `฿${Math.round(netPayout).toLocaleString('th-TH')}`;
+    document.getElementById('res-average-price').innerText = `เฉลี่ย ${avgPerKg.toFixed(2)} บาท/กก. สด`;
+    document.getElementById('res-net-weight').innerText = `${netWeight.toLocaleString('th-TH', {minimumFractionDigits: 2, maximumFractionDigits: 2})} กก.`;
+    document.getElementById('res-net-tons').innerText = `(${(netWeight / 1000).toFixed(2)} ตัน)`;
+  }
+
+  function saveDraft() {
+    const btn = document.getElementById('btn-save-draft');
+    const originalContent = btn.innerHTML;
+    btn.innerHTML = `<span class="material-symbols-outlined text-[22px] animate-spin">sync</span><span>กำลังบันทึกลงหน่วยความจำ...</span>`;
+    btn.classList.remove('bg-primary');
+    btn.classList.add('bg-tertiary');
+
+    setTimeout(() => {
+      btn.innerHTML = `<span class="material-symbols-outlined text-[22px]">check_circle</span><span>บันทึกร่างผลผลิตสำเร็จ (#DFT-${Math.floor(1000 + Math.random() * 9000)})</span>`;
+      btn.classList.remove('bg-tertiary');
+      btn.classList.add('bg-primary-container');
+      btn.classList.add('text-on-primary-container');
+
+      setTimeout(() => {
+        btn.innerHTML = originalContent;
+        btn.classList.add('bg-primary');
+        btn.classList.remove('bg-primary-container');
+        btn.classList.remove('text-on-primary-container');
+      }, 2500);
+    }, 600);
+  }
+
+  // Initial Calculation Run on DOM ready
+  document.addEventListener('DOMContentLoaded', () => {
+    calculateRealtime();
+  });
+</script></main><nav class="fixed bottom-0 inset-x-0 z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-2px_12px_rgba(0,0,0,0.06)]" data-active-classes="text-primary font-semibold"><div class="max-w-xl mx-auto grid grid-cols-4 h-20 items-center px-space-xs"><a aria-current="page" class="flex flex-col items-center justify-center gap-1 h-full min-h-[48px] transition-colors duration-150 text-primary font-semibold" data-path="pricing-calculator" href="#"><span class="material-symbols-outlined text-[24px]">calculate</span><span class="font-caption text-caption text-center leading-none">ประเมินราคา</span></a><a class="flex flex-col items-center justify-center gap-1 h-full min-h-[48px] text-on-surface-variant transition-colors duration-150" data-path="mill-matcher" href="#"><span class="material-symbols-outlined text-[24px]">distance</span><span class="font-caption text-caption text-center leading-none">ค้นหาลานรับซื้อ</span></a><a class="flex flex-col items-center justify-center gap-1 h-full min-h-[48px] text-on-surface-variant transition-colors duration-150" data-path="price-alerts" href="#"><span class="material-symbols-outlined text-[24px]">trending_up</span><span class="font-caption text-caption text-center leading-none">เตือนภัยราคา</span></a><a class="flex flex-col items-center justify-center gap-1 h-full min-h-[48px] text-on-surface-variant transition-colors duration-150" data-path="sales-history" href="#"><span class="material-symbols-outlined text-[24px]">receipt_long</span><span class="font-caption text-caption text-center leading-none">ประวัติการขาย</span></a></div></nav></body></html>
