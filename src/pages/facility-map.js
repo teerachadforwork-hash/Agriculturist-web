@@ -1,7 +1,7 @@
 import { fetchFacilitiesByCrop, fetchPricingRule, fetchTodayPrice } from '../services/api.js';
 import { calculatePrice } from '../engine/pricing-engine.js';
 import { findFacilitiesWithinRadius, rankFacilitiesByProfit, getGoogleMapsLink } from '../engine/geo-engine.js';
-import { facilityPrices } from '../data/mock-prices.js';
+
 
 let mapInstance = null;
 let currentCrop = 'rice';
@@ -82,14 +82,30 @@ export async function renderFacilityMap(params = {}) {
   const rule = await fetchPricingRule(currentCrop);
   const totalWeightKg = Number(params.weight || 12500);
   const quality = Number(params.moisture || (currentCrop === 'rice' ? 22 : currentCrop === 'cassava' ? 27 : 11.5));
-  const basePrice = market?.basePrice || (currentCrop === 'sugarcane' ? 890 : currentCrop === 'cassava' ? 2.85 : 9.5);
-  const priceResult = calculatePrice(currentCrop, currentCrop === 'sugarcane' ? totalWeightKg / 1000 : totalWeightKg, quality, basePrice, rule);
+  const basePrice = Number(market?.basePrice);
+
+  if (!Number.isFinite(basePrice)) {
+    throw new Error(`No market price available for ${currentCrop}`);
+  } const priceResult = calculatePrice(currentCrop, currentCrop === 'sugarcane' ? totalWeightKg / 1000 : totalWeightKg, quality, basePrice, rule);
   const nearby = findFacilitiesWithinRadius(facilities, userLocation.lat, userLocation.lng, currentRadius);
   const candidates = nearby.length > 0
     ? nearby
     : findFacilitiesWithinRadius(facilities, userLocation.lat, userLocation.lng, 9999).slice(0, 6);
-  rankedFacilities = rankFacilitiesByProfit(candidates, priceResult, facilityPrices, totalWeightKg);
+  const facilityPricesMap = Object.fromEntries(
+    candidates.map(facility => [
+      facility.id,
+      {
+        [currentCrop]: facility.facilityPrice,
+      },
+    ])
+  );
 
+  rankedFacilities = rankFacilitiesByProfit(
+    candidates,
+    priceResult,
+    facilityPricesMap,
+    totalWeightKg
+  );
   return `
     <div class="flex flex-col w-full h-[100dvh] bg-surface relative overflow-hidden">
       <div id="gis-map" class="absolute inset-0 z-0 bg-surface-container"></div>
@@ -112,8 +128,8 @@ export async function renderFacilityMap(params = {}) {
       <div class="absolute bottom-16 inset-x-0 z-30 pb-safe">
         <div class="w-full overflow-x-auto snap-x snap-mandatory flex gap-space-md px-margin pb-4 scrollbar-hide">
           ${rankedFacilities.length > 0
-            ? rankedFacilities.map(renderFacilityCard).join('')
-            : '<div class="w-[85vw] max-w-[340px] bg-surface-container-lowest rounded-2xl shadow-lg p-space-md text-on-surface">ยังไม่พบลานรับซื้อสำหรับพืชชนิดนี้</div>'}
+      ? rankedFacilities.map(renderFacilityCard).join('')
+      : '<div class="w-[85vw] max-w-[340px] bg-surface-container-lowest rounded-2xl shadow-lg p-space-md text-on-surface">ยังไม่พบลานรับซื้อสำหรับพืชชนิดนี้</div>'}
         </div>
       </div>
     </div>

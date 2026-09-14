@@ -18,58 +18,58 @@ type Store struct {
 }
 
 type User struct {
-	ID             string     `json:"id"`
-	LineUserID     string     `json:"lineUserId"`
+	ID              string    `json:"id"`
+	LineUserID      string    `json:"lineUserId"`
 	LineDisplayName string    `json:"lineDisplayName"`
-	PictureURL     string     `json:"pictureUrl,omitempty"`
-	Phone          string     `json:"phone,omitempty"`
-	Role           string     `json:"role"`
-	PDPAConsented  bool       `json:"pdpaConsented"`
-	CommunityShare bool       `json:"communityShareOptIn"`
-	CreatedAt      time.Time  `json:"createdAt"`
+	PictureURL      string    `json:"pictureUrl,omitempty"`
+	Phone           string    `json:"phone,omitempty"`
+	Role            string    `json:"role"`
+	PDPAConsented   bool      `json:"pdpaConsented"`
+	CommunityShare  bool      `json:"communityShareOptIn"`
+	CreatedAt       time.Time `json:"createdAt"`
 }
 
 type Crop struct {
-	ID              string   `json:"id"`
-	Name            string   `json:"name"`
-	Icon            string   `json:"icon"`
-	Image           string   `json:"image"`
-	Color           string   `json:"color"`
-	ColorRgb        string   `json:"colorRgb"`
-	StdMoisture     *float64 `json:"stdMoisture"`
-	StdStarch       *float64 `json:"stdStarch"`
-	StdCcs          *float64 `json:"stdCcs"`
-	Unit            string   `json:"unit"`
-	PriceUnit       string   `json:"priceUnit"`
-	QualityLabel    string   `json:"qualityLabel"`
-	QualityKey      string   `json:"qualityKey"`
-	QualityMin      float64  `json:"qualityMin"`
-	QualityMax      float64  `json:"qualityMax"`
-	QualityStep     float64  `json:"qualityStep"`
-	QualityDefault  float64  `json:"qualityDefault"`
-	Description     string   `json:"description"`
-	Formula         string   `json:"formula"`
+	ID             string   `json:"id"`
+	Name           string   `json:"name"`
+	Icon           string   `json:"icon"`
+	Image          string   `json:"image"`
+	Color          string   `json:"color"`
+	ColorRgb       string   `json:"colorRgb"`
+	StdMoisture    *float64 `json:"stdMoisture"`
+	StdStarch      *float64 `json:"stdStarch"`
+	StdCcs         *float64 `json:"stdCcs"`
+	Unit           string   `json:"unit"`
+	PriceUnit      string   `json:"priceUnit"`
+	QualityLabel   string   `json:"qualityLabel"`
+	QualityKey     string   `json:"qualityKey"`
+	QualityMin     float64  `json:"qualityMin"`
+	QualityMax     float64  `json:"qualityMax"`
+	QualityStep    float64  `json:"qualityStep"`
+	QualityDefault float64  `json:"qualityDefault"`
+	Description    string   `json:"description"`
+	Formula        string   `json:"formula"`
 }
 
 type Facility struct {
-	ID                 string          `json:"id"`
-	Name               string          `json:"name"`
-	Type               string          `json:"type"`
-	TypeLabel          string          `json:"typeLabel"`
-	Province           string          `json:"province"`
-	Lat                float64         `json:"lat"`
-	Lng                float64         `json:"lng"`
-	CapacityTons       float64         `json:"capacityTons"`
-	Rating             float64         `json:"rating"`
-	ReviewCount        int             `json:"reviewCount"`
-	SpecialDeductions  json.RawMessage `json:"specialDeductions"`
-	OperatingHours     string          `json:"operatingHours"`
-	Phone              string          `json:"phone"`
-	Distance           float64         `json:"distance,omitempty"`
-	FacilityPrice      *float64        `json:"facilityPrice,omitempty"`
-	TransportCost      float64         `json:"transportCost,omitempty"`
-	FacilityRevenue    float64         `json:"facilityRevenue,omitempty"`
-	NetProfit          float64         `json:"netProfit,omitempty"`
+	ID                string          `json:"id"`
+	Name              string          `json:"name"`
+	Type              string          `json:"type"`
+	TypeLabel         string          `json:"typeLabel"`
+	Province          string          `json:"province"`
+	Lat               float64         `json:"lat"`
+	Lng               float64         `json:"lng"`
+	CapacityTons      float64         `json:"capacityTons"`
+	Rating            float64         `json:"rating"`
+	ReviewCount       int             `json:"reviewCount"`
+	SpecialDeductions json.RawMessage `json:"specialDeductions"`
+	OperatingHours    string          `json:"operatingHours"`
+	Phone             string          `json:"phone"`
+	Distance          float64         `json:"distance,omitempty"`
+	FacilityPrice     *float64        `json:"facilityPrice,omitempty"`
+	TransportCost     float64         `json:"transportCost,omitempty"`
+	FacilityRevenue   float64         `json:"facilityRevenue,omitempty"`
+	NetProfit         float64         `json:"netProfit,omitempty"`
 }
 
 type TodayPrice struct {
@@ -103,16 +103,16 @@ type Transaction struct {
 }
 
 type Review struct {
-	ID             string `json:"id"`
-	UserID         string `json:"userId"`
-	UserName       string `json:"userName"`
-	FacilityID     string `json:"facilityId"`
-	FacilityName   string `json:"facilityName"`
-	TransactionID  string `json:"transactionId,omitempty"`
-	Rating         int    `json:"rating"`
-	ReviewText     string `json:"reviewText"`
-	CreatedAt      string `json:"createdAt"`
-	Verified       bool   `json:"verified"`
+	ID            string `json:"id"`
+	UserID        string `json:"userId"`
+	UserName      string `json:"userName"`
+	FacilityID    string `json:"facilityId"`
+	FacilityName  string `json:"facilityName"`
+	TransactionID string `json:"transactionId,omitempty"`
+	Rating        int    `json:"rating"`
+	ReviewText    string `json:"reviewText"`
+	CreatedAt     string `json:"createdAt"`
+	Verified      bool   `json:"verified"`
 }
 
 func (s *Store) UpsertUserByLINE(ctx context.Context, lineID, name, picture string) (User, error) {
@@ -228,22 +228,63 @@ func (s *Store) ListFacilities(ctx context.Context, cropID string) ([]Facility, 
 		       ST_Y(f.location::geometry), ST_X(f.location::geometry),
 		       COALESCE(f.capacity_tons,0), COALESCE(f.special_deductions,'[]'::jsonb),
 		       COALESCE(f.operating_hours,''), COALESCE(f.phone,''),
-		       COALESCE(AVG(r.rating),0), COUNT(r.id)
+		       COALESCE(AVG(r.rating),0), COUNT(r.id),
+		       CASE
+		           WHEN $1 <> '' THEN (
+		               SELECT p.base_price
+		               FROM daily_market_prices p
+		               WHERE p.facility_id = f.id
+		                 AND p.crop_id = $1
+		               ORDER BY p.price_date DESC, p.created_at DESC
+		               LIMIT 1
+		           )
+		           ELSE NULL
+		       END
 		FROM facilities f
 		LEFT JOIN facility_reviews r ON r.facility_id = f.id
 	`
-	args := []any{}
+
+	args := []any{cropID}
+
 	if cropID != "" {
-		q += ` WHERE f.type = $1`
+		q += ` WHERE f.type = $2`
 		args = append(args, cropType(cropID))
 	}
+
 	q += ` GROUP BY f.id ORDER BY f.name`
+
 	rows, err := s.Pool.Query(ctx, q, args...)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	return scanFacilities(rows)
+
+	return scanFacilitiesWithPrice(rows)
+}
+
+func scanFacilitiesWithPrice(rows pgx.Rows) ([]Facility, error) {
+	var out []Facility
+	for rows.Next() {
+		var f Facility
+		err := rows.Scan(
+			&f.ID, &f.Name, &f.Type, &f.TypeLabel, &f.Province,
+			&f.Lat, &f.Lng, &f.CapacityTons, &f.SpecialDeductions,
+			&f.OperatingHours, &f.Phone, &f.Rating, &f.ReviewCount,
+			&f.FacilityPrice,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		if f.SpecialDeductions == nil {
+			f.SpecialDeductions = json.RawMessage("[]")
+		}
+
+		f.Rating = round2(f.Rating)
+		out = append(out, f)
+	}
+
+	return out, rows.Err()
 }
 
 func (s *Store) GetFacility(ctx context.Context, id string) (Facility, error) {
@@ -498,11 +539,25 @@ func (s *Store) SaveTransaction(ctx context.Context, t Transaction) (Transaction
 	if t.Status == "" {
 		t.Status = "pending"
 	}
+
+	if t.TotalWeight <= 0 {
+		return t, fmt.Errorf("total weight must be greater than 0")
+	}
+
+	if t.QualityMetric < 0 {
+		return t, fmt.Errorf("quality metric cannot be negative")
+	}
+
 	_, err := s.Pool.Exec(ctx, `
 		INSERT INTO transactions_history
-			(id, user_id, crop_id, facility_id, total_weight, quality_metric, predicted_price, actual_received, price_difference, price_per_unit, tx_date, status, notes)
+			(id, user_id, crop_id, facility_id, total_weight, quality_metric,
+			 predicted_price, actual_received, price_difference, price_per_unit,
+			 tx_date, status, notes)
 		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
-	`, t.ID, t.UserID, t.CropID, t.FacilityID, t.TotalWeight, t.QualityMetric, t.PredictedPrice, t.ActualReceived, t.PriceDifference, t.PricePerUnit, t.Date, t.Status, t.Notes)
+	`, t.ID, t.UserID, t.CropID, t.FacilityID, t.TotalWeight, t.QualityMetric,
+		t.PredictedPrice, t.ActualReceived, t.PriceDifference, t.PricePerUnit,
+		t.Date, t.Status, t.Notes)
+
 	return t, err
 }
 
@@ -534,11 +589,18 @@ func (s *Store) ListTransactions(ctx context.Context, userID string) ([]Transact
 	return out, rows.Err()
 }
 
-func (s *Store) HasUserSoldAt(ctx context.Context, userID, facilityID string) (bool, error) {
+func (s *Store) HasUserSoldAt(ctx context.Context, userID, facilityID, transactionID string) (bool, error) {
 	var ok bool
 	err := s.Pool.QueryRow(ctx, `
-		SELECT EXISTS(SELECT 1 FROM transactions_history WHERE user_id=$1 AND facility_id=$2 AND status='completed')
-	`, userID, facilityID).Scan(&ok)
+		SELECT EXISTS(
+			SELECT 1
+			FROM transactions_history
+			WHERE id = $1
+			  AND user_id = $2
+			  AND facility_id = $3
+			  AND status = 'completed'
+		)
+	`, transactionID, userID, facilityID).Scan(&ok)
 	return ok, err
 }
 
@@ -557,7 +619,7 @@ func (s *Store) SaveReview(ctx context.Context, r Review) (Review, error) {
 	if r.CreatedAt == "" {
 		r.CreatedAt = time.Now().Format("2006-01-02")
 	}
-	r.Verified = r.TransactionID != ""
+
 	return r, err
 }
 

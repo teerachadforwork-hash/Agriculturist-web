@@ -79,3 +79,37 @@ func TestRateLimit(t *testing.T) {
 		}
 	}
 }
+
+func TestJWTSecurity(t *testing.T) {
+	s := &Server{Cfg: config.Config{JWTSecret: "test_secret"}, Log: slog.New(slog.NewTextHandler(os.Stdout, nil))}
+	r := s.Router()
+
+	req := httptest.NewRequest(http.MethodGet, "/api/transactions", nil)
+	rec := httptest.NewRecorder()
+	r.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusUnauthorized {
+		t.Fatalf("expected 401 Unauthorized for missing JWT, got %d", rec.Code)
+	}
+
+	req.Header.Set("Authorization", "Bearer invalid.token.here")
+	rec = httptest.NewRecorder()
+	r.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusUnauthorized {
+		t.Fatalf("expected 401 Unauthorized for invalid JWT, got %d", rec.Code)
+	}
+}
+
+func TestUploadOwnership(t *testing.T) {
+	s := &Server{Cfg: config.Config{JWTSecret: "test_secret"}, Log: slog.New(slog.NewTextHandler(os.Stdout, nil))}
+	r := s.Router()
+
+	req := httptest.NewRequest(http.MethodPost, "/api/receipts", nil)
+	rec := httptest.NewRecorder()
+	r.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusUnauthorized {
+		t.Fatalf("expected 401 Unauthorized for missing JWT on upload, got %d", rec.Code)
+	}
+}

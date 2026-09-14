@@ -1,5 +1,4 @@
 import { fetchTransactions } from '../services/api.js';
-import { getUser } from '../auth.js';
 
 let renderedTransactions = [];
 
@@ -43,8 +42,7 @@ function renderTransaction(tx) {
 }
 
 export async function renderTransactions() {
-  const user = getUser();
-  renderedTransactions = await fetchTransactions(user?.id || 'user-001');
+  renderedTransactions = await fetchTransactions();
   const completedTotal = renderedTransactions
     .filter(tx => tx.status === 'completed')
     .reduce((sum, tx) => sum + Number(tx.actualReceived || tx.predictedPrice || 0), 0);
@@ -77,8 +75,8 @@ export async function renderTransactions() {
 
         <div class="space-y-3 pt-2">
           ${renderedTransactions.length > 0
-            ? renderedTransactions.map((tx, index) => `${index > 0 ? '<hr class="border-surface-container" />' : ''}${renderTransaction(tx)}`).join('')
-            : '<p class="font-body-sm text-body-sm text-on-surface-variant">ยังไม่มีประวัติ ลองบันทึกร่างจากหน้าเครื่องคำนวณก่อน</p>'}
+      ? renderedTransactions.map((tx, index) => `${index > 0 ? '<hr class="border-surface-container" />' : ''}${renderTransaction(tx)}`).join('')
+      : '<p class="font-body-sm text-body-sm text-on-surface-variant">ยังไม่มีประวัติ ลองบันทึกร่างจากหน้าเครื่องคำนวณก่อน</p>'}
         </div>
 
         <button id="btn-export-csv" type="button" class="w-full mt-4 h-12 bg-surface-container-low hover:bg-surface-container text-tertiary rounded-xl font-body-sm text-body-sm font-bold flex items-center justify-center gap-2 shadow-sm transition-colors">

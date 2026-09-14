@@ -1,5 +1,5 @@
 import { getDrafts, saveDraft } from '../utils/offline.js';
-import { fetchPricingRule, fetchTodayPrice } from '../services/api.js';
+import { fetchPricingRule, fetchTodayPrice, calculatePriceFromBackend } from '../services/api.js';
 import { calculatePrice } from '../engine/pricing-engine.js';
 import { estimateTransportCost } from '../engine/transport-cost.js';
 import { navigate } from '../router.js';
@@ -373,22 +373,44 @@ export function initCalculatorEvents() {
 
     document.getElementById('label-quality-param').innerHTML = `<span class="material-symbols-outlined text-[18px] text-secondary">tune</span><span>${config.qualityParamName}</span>`;
     document.getElementById('input-unit-symbol').innerText = config.qualityUnit;
-    
+
     sliderMoisture.min = config.sliderMin;
     sliderMoisture.max = config.sliderMax;
     sliderMoisture.value = config.qualityDefault;
 
     inMoisture.value = config.qualityDefault.toFixed(1);
-    
+
     // UI Loading state for price fetch
     inBasePrice.value = '...';
     try {
       const marketPrice = await fetchTodayPrice(crop);
-      inBasePrice.value = marketPrice ? Math.round(marketPrice.basePrice * (crop === 'sugarcane' ? 1 : 1000)) : config.refPrice;
-      if (!marketPrice) showToast('ใช้ราคาอ้างอิงเริ่มต้น (ระบบทดลอง)', 'info');
+
+      if (!marketPrice || !Number.isFinite(Number(marketPrice.basePrice))) {
+        throw new Error(`No market price available for ${crop}`);
+      }
+
+      inBasePrice.value = Math.round(
+        Number(marketPrice.basePrice) *
+        (crop === 'sugarcane' ? 1 : 1000)
+      );
     } catch (err) {
+      console.error('Failed to load market price:', err);
+
+      if (import.meta.env.PROD) {
+        showToast(
+          'ไม่สามารถโหลดราคาตลาดจากระบบได้ กรุณาลองใหม่อีกครั้ง',
+          'error'
+        );
+        return;
+      }
+
+      // Development only: allow local reference price
       inBasePrice.value = config.refPrice;
-      showToast('ไม่สามารถดึงราคากลางได้ เปิดใช้งานโหมดออฟไลน์', 'error');
+
+      showToast(
+        'ไม่สามารถดึงราคาตลาดได้ ใช้ราคาอ้างอิงสำหรับโหมดพัฒนา',
+        'info'
+      );
     }
 
     document.getElementById('formula-title').innerText = config.formulaTitle;
@@ -422,30 +444,54 @@ export function initCalculatorEvents() {
     document.getElementById('label-ton-equivalent').innerText = `เท่ากับ ${tons} ตัน`;
 
     const config = cropConfigs[currentCrop];
-    const rule = await fetchPricingRule(currentCrop);
     const basePriceForEngine = currentCrop === 'sugarcane' ? basePricePerTon : basePricePerTon / 1000;
     const weightForEngine = currentCrop === 'sugarcane' ? weight / 1000 : weight;
-    const result = calculatePrice(currentCrop, weightForEngine, qualityVal, basePriceForEngine, rule);
+
+    let result;
+    try {
+      result = await calculatePriceFromBackend({
+        cropId: currentCrop,
+        totalWeight: weightForEngine,
+        qualityMetric: qualityVal,
+        basePrice: basePriceForEngine
+      });
+    } catch (e) {
+      console.error('Backend calculation failed:', e);
+
+      if (import.meta.env.PROD) {
+        throw e;
+      }
+
+      const rule = await fetchPricingRule(currentCrop);
+      result = calculatePrice(
+        currentCrop,
+        weightForEngine,
+        qualityVal,
+        basePriceForEngine,
+        rule
+      );
+    }
+
     const diff = qualityVal - config.standardQuality;
 
     if (currentCrop === 'rice') {
       const deductPercent = weight > 0 ? (result.weightDeduction / weight) * 100 : 0;
       document.getElementById('res-excess-val').innerText = diff > 0 ? `+${diff.toFixed(1)}%` : `0.0%`;
-      document.getElementById('res-weight-deducted').innerText = `-${result.weightDeduction.toLocaleString('th-TH', {minimumFractionDigits: 2, maximumFractionDigits: 2})} กก.`;
+      document.getElementById('res-weight-deducted').innerText = `-${result.weightDeduction.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} กก.`;
       document.getElementById('res-deduct-percentage').innerText = `(สูตรหัก ${deductPercent.toFixed(2)}%)`;
       document.getElementById('res-loss-rate').innerText = `หักชื้น ${deductPercent.toFixed(2)}%`;
-    } 
+    }
     else if (currentCrop === 'cassava') {
       document.getElementById('res-excess-val').innerText = `${diff >= 0 ? '+' : ''}${diff.toFixed(1)}%`;
       document.getElementById('res-weight-deducted').innerText = diff >= 0 ? `+฿${(diff * 100).toFixed(0)}/ตัน (พรีเมียม)` : `-฿${Math.abs(diff * 100).toFixed(0)}/ตัน (หักแป้ง)`;
       document.getElementById('res-deduct-percentage').innerText = `(ราคาปรับเป็น ฿${(result.adjustedPrice * 1000).toLocaleString('th-TH')}/ตัน)`;
-      document.getElementById('res-loss-rate').innerText = diff >= 0 ? `โบนัสแป้ง +${(diff*0.1).toFixed(2)}฿/กก.` : `หักแป้ง ${(diff*0.1).toFixed(2)}฿/กก.`;
-    } 
+      document.getElementById('res-loss-rate').innerText = diff >= 0 ? `โบนัสแป้ง +${(diff * 0.1).toFixed(2)}฿/กก.` : `หักแป้ง ${(diff * 0.1).toFixed(2)}฿/กก.`;
+    }
     else if (currentCrop === 'sugarcane') {
       document.getElementById('res-excess-val').innerText = `${diff >= 0 ? '+' : ''}${diff.toFixed(1)} CCS`;
       document.getElementById('res-weight-deducted').innerText = diff >= 0 ? `+฿${(diff * 53.4).toFixed(1)}/ตัน` : `-฿${Math.abs(diff * 53.4).toFixed(1)}/ตัน`;
       document.getElementById('res-deduct-percentage').innerText = `(ราคาตาม CCS ฿${result.pricePerUnit.toFixed(2)}/ตัน)`;
-      document.getElementById('res-loss-rate').innerText = `${diff >= 0 ? '+' : ''}${(diff*53.4).toFixed(0)} บาท/ตัน`;
+      document.getElementById('res-loss-rate').innerText = `${diff >= 0 ? '+' : ''}${(diff * 53.4).toFixed(0)} บาท/ตัน`;
     }
 
     const deltaBadgeText = diff >= 0
@@ -459,7 +505,7 @@ export function initCalculatorEvents() {
     document.getElementById('badge-quality-delta').innerText = deltaBadgeText;
     document.getElementById('res-total-payout').innerText = `฿${Math.round(result.netPrice).toLocaleString('th-TH')}`;
     document.getElementById('res-average-price').innerText = `เฉลี่ย ${avgPerKg.toFixed(2)} บาท/กก. สด`;
-    document.getElementById('res-net-weight').innerText = `${displayNetWeight.toLocaleString('th-TH', {minimumFractionDigits: 2, maximumFractionDigits: 2})} กก.`;
+    document.getElementById('res-net-weight').innerText = `${displayNetWeight.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} กก.`;
     document.getElementById('res-net-tons').innerText = `(${(displayNetWeight / 1000).toFixed(2)} ตัน)`;
     return result;
   }
@@ -484,9 +530,39 @@ export function initCalculatorEvents() {
     calculateRealtime();
   });
 
-  document.getElementById('btn-reset-price').addEventListener('click', () => {
-    inBasePrice.value = cropConfigs[currentCrop].refPrice;
-    calculateRealtime();
+  document.getElementById('btn-reset-price').addEventListener('click', async () => {
+    try {
+      const marketPrice = await fetchTodayPrice(currentCrop);
+
+      if (!marketPrice || !Number.isFinite(Number(marketPrice.basePrice))) {
+        throw new Error(`No market price available for ${currentCrop}`);
+      }
+
+      inBasePrice.value = Math.round(
+        Number(marketPrice.basePrice) *
+        (currentCrop === 'sugarcane' ? 1 : 1000)
+      );
+
+      await calculateRealtime();
+    } catch (err) {
+      console.error('Failed to reset market price:', err);
+
+      if (import.meta.env.PROD) {
+        showToast(
+          'ไม่สามารถโหลดราคาตลาดล่าสุดได้ กรุณาลองใหม่อีกครั้ง',
+          'error'
+        );
+        return;
+      }
+
+      inBasePrice.value = cropConfigs[currentCrop].refPrice;
+      await calculateRealtime();
+
+      showToast(
+        'ใช้ราคาอ้างอิงสำหรับโหมดพัฒนา',
+        'info'
+      );
+    }
   });
   inBasePrice.addEventListener('input', calculateRealtime);
 
@@ -504,12 +580,12 @@ export function initCalculatorEvents() {
     const originalHtml = btnSave.innerHTML;
     btnSave.innerHTML = `<span class="material-symbols-outlined text-[22px] animate-spin">sync</span><span>กำลังบันทึกลงหน่วยความจำ...</span>`;
     btnSave.classList.replace('bg-primary', 'bg-tertiary');
-    
+
     setTimeout(() => {
       btnSave.innerHTML = `<span class="material-symbols-outlined text-[22px]">check_circle</span><span>บันทึกร่างผลผลิตสำเร็จ (#DFT-${Math.floor(1000 + Math.random() * 9000)})</span>`;
       btnSave.classList.replace('bg-tertiary', 'bg-primary-container');
       btnSave.classList.add('text-on-primary-container');
-      
+
       calculateRealtime().then(result => {
         saveDraft({
           cropId: currentCrop,
@@ -526,7 +602,7 @@ export function initCalculatorEvents() {
         });
         showToast('บันทึกร่างสำเร็จ ข้อมูลถูกเก็บไว้ในเครื่อง', 'success');
       });
-      
+
       setTimeout(() => {
         btnSave.innerHTML = originalHtml;
         btnSave.classList.replace('bg-primary-container', 'bg-primary');

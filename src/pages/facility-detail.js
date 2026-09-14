@@ -25,7 +25,11 @@ export async function renderFacilityDetail(params = {}) {
   const market = await fetchTodayPrice(cropId);
   const facilityPrice = await fetchFacilityPrice(facility.id, cropId);
   const rule = await fetchPricingRule(cropId);
-  const basePrice = facilityPrice || market?.basePrice || (cropId === 'sugarcane' ? 890 : cropId === 'cassava' ? 2.85 : 9.5);
+  const basePrice = facilityPrice ?? market?.basePrice;
+
+  if (!Number.isFinite(Number(basePrice)) || Number(basePrice) <= 0) {
+    throw new Error(`Price unavailable for facility ${facility.id} and crop ${cropId}`);
+  }
   const result = calculatePrice(cropId, cropId === 'sugarcane' ? weight / 1000 : weight, quality, basePrice, rule);
   const displayPrice = cropId === 'sugarcane' ? result.pricePerUnit : result.pricePerUnit * 1000;
 
@@ -300,9 +304,9 @@ export function initFacilityDetailEvents() {
       const parent = e.target.parentElement;
       const allStars = parent.querySelectorAll('span');
       const clickedIdx = Array.from(allStars).indexOf(e.target);
-      
+
       allStars.forEach((s, idx) => {
-        if(idx <= clickedIdx) s.style.fontVariationSettings = "'FILL' 1";
+        if (idx <= clickedIdx) s.style.fontVariationSettings = "'FILL' 1";
         else s.style.fontVariationSettings = "'FILL' 0";
       });
     });
@@ -317,7 +321,6 @@ export function initFacilityDetailEvents() {
       saveBtn.innerHTML = '<span class="material-symbols-outlined text-[20px] animate-spin">sync</span><span>กำลังบันทึก...</span>';
 
       const transaction = await saveTransaction({
-        userId: user?.id || 'demo-farmer-001',
         cropId: detailContext.cropId,
         cropName: detailContext.meta.name,
         cropIcon: detailContext.meta.icon,
@@ -331,12 +334,11 @@ export function initFacilityDetailEvents() {
         priceDifference: 0,
         pricePerUnit: detailContext.result.pricePerUnit,
         status: 'completed',
-        notes: 'บันทึกจากหน้าลานรับซื้อพร้อมพิกัด',
+        notes: 'บันทึกธุรกรรม',
       });
 
       await saveReview({
-        userId: user?.id || 'demo-farmer-001',
-        userName: user?.lineDisplayName || 'เกษตรกรทดลอง',
+        userName: user?.lineDisplayName || 'ไม่ระบุชื่อ',
         facilityId: detailContext.facility.id,
         facilityName: detailContext.facility.name,
         transactionId: transaction.id,

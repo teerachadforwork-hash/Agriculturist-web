@@ -40,12 +40,47 @@ func Connect(endpoint, access, secret, bucket string, useSSL bool) (*Store, erro
 	return &Store{client: client, bucket: bucket}, nil
 }
 
-func (s *Store) PutReceipt(ctx context.Context, filename string, body []byte, contentType string) (string, error) {
+func receiptExtension(contentType string) (string, error) {
+	switch contentType {
+	case "image/jpeg":
+		return ".jpg", nil
+	case "image/png":
+		return ".png", nil
+	case "application/pdf":
+		return ".pdf", nil
+	default:
+		return "", fmt.Errorf("unsupported receipt content type: %s", contentType)
+	}
+}
+
+func (s *Store) PutReceipt(ctx context.Context, userID, filename string, body []byte, contentType string) (string, error) {
 	if s == nil || s.client == nil {
 		return "", fmt.Errorf("object storage is not configured")
 	}
-	key := path.Join("receipts", time.Now().Format("2006/01/02"), uuid.NewString()+path.Ext(filename))
-	_, err := s.client.PutObject(ctx, s.bucket, key, bytes.NewReader(body), int64(len(body)), minio.PutObjectOptions{ContentType: contentType})
+
+	ext, err := receiptExtension(contentType)
+	if err != nil {
+		return "", err
+	}
+
+	key := path.Join(
+		"receipts",
+		userID,
+		time.Now().Format("2006/01/02"),
+		uuid.NewString()+ext,
+	)
+
+	_, err = s.client.PutObject(
+		ctx,
+		s.bucket,
+		key,
+		bytes.NewReader(body),
+		int64(len(body)),
+		minio.PutObjectOptions{
+			ContentType: contentType,
+		},
+	)
+
 	return key, err
 }
 

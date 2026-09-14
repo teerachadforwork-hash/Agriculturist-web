@@ -4,6 +4,7 @@
 
 import { registerRoute, initRouter, navigate, setBeforeNavigate } from './router.js';
 import { isAuthenticated } from './auth.js';
+import { checkPdpaConsent } from './utils/pdpa.js';
 import { renderNavbar, initNavbarEvents } from './components/navbar.js';
 import { renderLanding } from './pages/landing.js';
 import { renderLogin, initLoginEvents } from './pages/login.js';
@@ -102,3 +103,4 @@ registerRoute('/facility', (params) => {
 
 // ── Initialize ──
 initRouter();
+checkPdpaConsent();

@@ -1,4 +1,6 @@
-import { initiateLineLogin, loginWithProfile } from '../auth.js';
+import { initiateLineLogin, loginWithToken } from '../auth.js';
+import { checkPdpaConsent } from '../utils/pdpa.js';
+import { showToast } from '../utils/toast.js';
 
 export function renderLogin() {
   return `
@@ -49,13 +51,41 @@ export function initLoginEvents() {
   document.getElementById('btn-login-line').addEventListener('click', () => {
     initiateLineLogin();
   });
-  document.getElementById('btn-login-demo').addEventListener('click', () => {
-    loginWithProfile({
-      userId: 'demo-farmer-001',
-      displayName: 'เกษตรกรทดลอง',
-      pictureUrl: '',
-      statusMessage: 'Local demo',
-    });
-    window.location.hash = '#/dashboard';
+  document.getElementById('btn-login-demo').addEventListener('click', async () => {
+    try {
+      let baseUrl = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
+
+      if (!baseUrl) {
+        throw new Error('VITE_API_BASE_URL is not configured');
+      }
+
+      if (!baseUrl.startsWith('http')) {
+        baseUrl = 'https://' + baseUrl;
+      }
+
+      const response = await fetch(`${baseUrl}/api/auth/demo`, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+        },
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success || !data.token || !data.user) {
+        throw new Error(data?.error || 'Demo authentication failed');
+      }
+
+      loginWithToken(data.token, data.user);
+      checkPdpaConsent();
+
+      window.location.hash = '#/dashboard';
+    } catch (error) {
+      console.error('Demo login failed:', error);
+      showToast(
+        'ไม่สามารถเข้าสู่ระบบ Demo ได้ กรุณาลองใหม่อีกครั้ง',
+        'error'
+      );
+    }
   });
 }

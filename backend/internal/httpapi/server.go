@@ -34,12 +34,23 @@ type Server struct {
 	Log    *slog.Logger
 }
 
+func (s *Server) securityHeaders(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Security-Policy", "default-src 'none'; frame-ancestors 'none'")
+		w.Header().Set("X-Content-Type-Options", "nosniff")
+		w.Header().Set("X-Frame-Options", "DENY")
+		w.Header().Set("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
+		next.ServeHTTP(w, r)
+	})
+}
+
 func (s *Server) Router() http.Handler {
 	r := chi.NewRouter()
 	r.Use(middleware.RequestID)
 	r.Use(middleware.RealIP)
 	r.Use(s.logRequests)
 	r.Use(middleware.Recoverer)
+	r.Use(s.securityHeaders)
 	r.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   s.Cfg.CORSOrigins,
 		AllowedMethods:   []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
@@ -51,7 +62,7 @@ func (s *Server) Router() http.Handler {
 	mount := func(r chi.Router) {
 		r.Get("/health", s.health)
 		r.Get("/ready", s.ready)
-		r.Handle("/metrics", promhttp.Handler())
+		r.Handle("/metrics", s.withAuth(promhttp.Handler().ServeHTTP))
 
 		r.Get("/auth/line/start", s.authStart)
 		r.Get("/auth/line", s.authLine)
@@ -141,81 +152,173 @@ func (s *Server) ready(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) authStart(w http.ResponseWriter, r *http.Request) {
 	if s.Cfg.LINEChannelID == "" {
-		writeJSON(w, http.StatusServiceUnavailable, map[string]any{"success": false, "error": "LINE is not configured"})
+		writeJSON(w, http.StatusServiceUnavailable, map[string]any{
+			"success": false,
+			"error":   "LINE is not configured",
+		})
 		return
 	}
+
 	state, err := auth.RandomState()
 	if err != nil {
-		writeJSON(w, http.StatusInternalServerError, map[string]any{"success": false, "error": "state error"})
+		writeJSON(w, http.StatusInternalServerError, map[string]any{
+			"success": false,
+			"error":   "state error",
+		})
 		return
 	}
-	_ = s.Cache.SetState(r.Context(), state, 10*time.Minute)
-	_, _ = s.Store.Pool.Exec(r.Context(), `INSERT INTO oauth_states (state, expires_at) VALUES ($1, now() + interval '10 minutes')`, state)
+
+	_, err = s.Store.Pool.Exec(
+		r.Context(),
+		`INSERT INTO oauth_states (state, expires_at)
+		 VALUES ($1, now() + interval '10 minutes')`,
+		state,
+	)
+	if err != nil {
+		writeJSON(w, http.StatusInternalServerError, map[string]any{
+			"success": false,
+			"error":   "unable to create oauth state",
+		})
+		return
+	}
+
 	writeJSON(w, http.StatusOK, map[string]any{
-		"authorizeUrl": auth.AuthorizeURL(s.Cfg.LINEChannelID, s.Cfg.LINECallbackURL, state),
-		"state":        state,
+		"authorizeUrl": auth.AuthorizeURL(
+			s.Cfg.LINEChannelID,
+			s.Cfg.LINECallbackURL,
+			state,
+		),
+		"state": state,
 	})
 }
 
 func (s *Server) authLine(w http.ResponseWriter, r *http.Request) {
 	code := r.URL.Query().Get("code")
-	redirect := r.URL.Query().Get("redirect_uri")
 	state := r.URL.Query().Get("state")
+
 	if r.Method == http.MethodPost {
 		var body map[string]string
-		_ = json.NewDecoder(r.Body).Decode(&body)
+		if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+			writeJSON(w, http.StatusBadRequest, map[string]any{
+				"success": false,
+				"error":   "invalid request body",
+			})
+			return
+		}
+
 		if body["code"] != "" {
 			code = body["code"]
 		}
-		if body["redirectUri"] != "" {
-			redirect = body["redirectUri"]
-		}
+
 		if body["state"] != "" {
 			state = body["state"]
 		}
 	}
+
+	redirect := s.Cfg.LINECallbackURL
+
 	if code == "" {
-		writeJSON(w, http.StatusBadRequest, map[string]any{"success": false, "error": "missing code"})
+		writeJSON(w, http.StatusBadRequest, map[string]any{
+			"success": false,
+			"error":   "missing code",
+		})
 		return
 	}
-	if redirect == "" {
-		redirect = s.Cfg.LINECallbackURL
+
+	if state == "" {
+		writeJSON(w, http.StatusBadRequest, map[string]any{
+			"success": false,
+			"error":   "missing oauth state",
+		})
+		return
 	}
-	if state != "" {
-		ok, _ := s.Cache.ConsumeState(r.Context(), state)
-		var dbOK bool
-		_ = s.Store.Pool.QueryRow(r.Context(), `DELETE FROM oauth_states WHERE state=$1 AND expires_at > now() RETURNING true`, state).Scan(&dbOK)
-		if !ok && !dbOK {
-			writeJSON(w, http.StatusBadRequest, map[string]any{"success": false, "error": "invalid oauth state"})
-			return
-		}
+
+	var stateValid bool
+
+	err := s.Store.Pool.QueryRow(
+		r.Context(),
+		`DELETE FROM oauth_states
+	 WHERE state = $1
+	   AND expires_at > now()
+	 RETURNING true`,
+		state,
+	).Scan(&stateValid)
+
+	if err != nil || !stateValid {
+		writeJSON(w, http.StatusBadRequest, map[string]any{
+			"success": false,
+			"error":   "invalid oauth state",
+		})
+		return
 	}
+
 	if s.Cfg.LINEChannelID == "" || s.Cfg.LINEChannelSecret == "" {
-		writeJSON(w, http.StatusServiceUnavailable, map[string]any{"success": false, "error": "LINE secret is server-only and is not configured"})
+		writeJSON(w, http.StatusServiceUnavailable, map[string]any{
+			"success": false,
+			"error":   "LINE secret is server-only and is not configured",
+		})
 		return
 	}
-	profile, _, err := auth.ExchangeLINECode(r.Context(), s.Cfg.LINEChannelID, s.Cfg.LINEChannelSecret, redirect, code)
+
+	profile, _, err := auth.ExchangeLINECode(
+		r.Context(),
+		s.Cfg.LINEChannelID,
+		s.Cfg.LINEChannelSecret,
+		redirect,
+		code,
+	)
 	if err != nil {
 		s.Log.Error("line exchange", "err", err)
-		writeJSON(w, http.StatusBadRequest, map[string]any{"success": false, "error": "Authentication failed"})
+		writeJSON(w, http.StatusBadRequest, map[string]any{
+			"success": false,
+			"error":   "Authentication failed",
+		})
 		return
 	}
-	user, err := s.Store.UpsertUserByLINE(r.Context(), profile.UserID, profile.DisplayName, profile.PictureURL)
+
+	user, err := s.Store.UpsertUserByLINE(
+		r.Context(),
+		profile.UserID,
+		profile.DisplayName,
+		profile.PictureURL,
+	)
 	if err != nil {
-		writeJSON(w, http.StatusInternalServerError, map[string]any{"success": false, "error": "user persist failed"})
+		writeJSON(w, http.StatusInternalServerError, map[string]any{
+			"success": false,
+			"error":   "user persist failed",
+		})
 		return
 	}
-	tok, err := auth.Sign(s.Cfg.JWTSecret, user.ID, user.LineUserID, user.Role, s.Cfg.JWTExpiry)
+
+	tok, err := auth.Sign(
+		s.Cfg.JWTSecret,
+		user.ID,
+		user.LineUserID,
+		user.Role,
+		s.Cfg.JWTExpiry,
+	)
 	if err != nil {
-		writeJSON(w, http.StatusInternalServerError, map[string]any{"success": false, "error": "token failed"})
+		writeJSON(w, http.StatusInternalServerError, map[string]any{
+			"success": false,
+			"error":   "token failed",
+		})
 		return
 	}
-	s.Store.Audit(r.Context(), user.ID, "auth.line", "users", r.RemoteAddr, map[string]string{"lineUserId": user.LineUserID})
+
+	s.Store.Audit(
+		r.Context(),
+		user.ID,
+		"auth.line",
+		"users",
+		r.RemoteAddr,
+		map[string]string{"lineUserId": user.LineUserID},
+	)
+
 	writeJSON(w, http.StatusOK, map[string]any{
-		"success": true,
-		"token":   tok.AccessToken,
+		"success":   true,
+		"token":     tok.AccessToken,
 		"expiresIn": tok.ExpiresIn,
-		"user":    user,
+		"user":      user,
 		"profile": map[string]any{
 			"userId":        user.ID,
 			"displayName":   user.LineDisplayName,
@@ -237,6 +340,7 @@ func (s *Server) authDemo(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, http.StatusInternalServerError, map[string]any{"success": false})
 		return
 	}
+
 	s.Store.Audit(r.Context(), user.ID, "auth.demo", "users", r.RemoteAddr, nil)
 	writeJSON(w, http.StatusOK, map[string]any{
 		"success": true,
@@ -377,7 +481,7 @@ func (s *Server) nearby(w http.ResponseWriter, r *http.Request) {
 					}
 				}
 				list[i].FacilityRevenue = float64(int(rev + 0.5))
-				list[i].NetProfit = float64(int(rev-list[i].TransportCost+0.5))
+				list[i].NetProfit = float64(int(rev - list[i].TransportCost + 0.5))
 			}
 		}
 	}
@@ -405,6 +509,18 @@ func (s *Server) reviews(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) postFacilityPrice(w http.ResponseWriter, r *http.Request) {
 	claims := claimsFrom(r.Context())
+	facilityID := chi.URLParam(r, "id")
+
+	// Enforce that the user actually owns the facility
+	if claims.Role != "admin" {
+		var ownerID *string
+		err := s.Store.Pool.QueryRow(r.Context(), `SELECT owner_user_id  FROM facilities WHERE id=$1`, facilityID).Scan(&ownerID)
+		if err != nil || ownerID == nil || *ownerID != claims.UserID {
+			http.Error(w, `{"error":"forbidden: you do not own this facility"}`, http.StatusForbidden)
+			return
+		}
+	}
+
 	var body struct {
 		CropID string  `json:"cropId"`
 		Price  float64 `json:"price"`
@@ -413,11 +529,11 @@ func (s *Server) postFacilityPrice(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, `{"error":"invalid json"}`, 400)
 		return
 	}
-	if err := s.Store.UpsertFacilityPrice(r.Context(), chi.URLParam(r, "id"), body.CropID, body.Price, "facility_owner", time.Now().UTC()); err != nil {
+	if err := s.Store.UpsertFacilityPrice(r.Context(), facilityID, body.CropID, body.Price, "facility_owner", time.Now().UTC()); err != nil {
 		http.Error(w, err.Error(), 500)
 		return
 	}
-	s.Store.Audit(r.Context(), claims.UserID, "price.facility", chi.URLParam(r, "id"), r.RemoteAddr, body)
+	s.Store.Audit(r.Context(), claims.UserID, "price.facility", facilityID, r.RemoteAddr, body)
 	writeJSON(w, 200, map[string]any{"ok": true})
 }
 
@@ -497,13 +613,27 @@ func (s *Server) calculations(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, `{"error":"invalid json"}`, 400)
 		return
 	}
-	rule, _ := s.Store.ActiveRule(r.Context(), body.CropID)
-	if body.BasePrice == 0 {
-		prices, _ := s.Store.TodayPrices(r.Context())
-		if p, ok := prices[body.CropID]; ok {
-			body.BasePrice = p.BasePrice
-		}
+	rule, err := s.Store.ActiveRule(r.Context(), body.CropID)
+	if err != nil {
+		http.Error(w, `{"error":"unable to load pricing rule"}`, http.StatusInternalServerError)
+		return
 	}
+
+	prices, err := s.Store.TodayPrices(r.Context())
+	if err != nil {
+		http.Error(w, `{"error":"unable to load market price"}`, http.StatusInternalServerError)
+		return
+	}
+
+	p, ok := prices[body.CropID]
+	if !ok || p.BasePrice <= 0 {
+		http.Error(w, `{"error":"market price unavailable"}`, http.StatusBadRequest)
+		return
+	}
+
+	// The authoritative market price comes from the backend database.
+	// Never trust a client-supplied basePrice.
+	body.BasePrice = p.BasePrice
 	result, err := pricing.Calculate(body.CropID, body.TotalWeight, body.QualityMetric, body.BasePrice, rule)
 	if err != nil {
 		http.Error(w, err.Error(), 400)
@@ -518,18 +648,14 @@ func (s *Server) calculations(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) transactions(w http.ResponseWriter, r *http.Request) {
-	userID := r.URL.Query().Get("userId")
-	if c, err := bearerClaims(r, s.Cfg.JWTSecret); err == nil {
-		userID = c.UserID
-	} else if userID != "" {
-		if resolved, err := s.Store.ResolveUserID(r.Context(), userID); err == nil && resolved != "" {
-			userID = resolved
-		}
-	}
-	if userID == "" {
-		writeJSON(w, 200, []any{})
+	// Transactions are private. Force the use of JWT Bearer token.
+	claims, err := bearerClaims(r, s.Cfg.JWTSecret)
+	if err != nil {
+		http.Error(w, `{"error":"unauthorized"}`, http.StatusUnauthorized)
 		return
 	}
+	userID := claims.UserID
+
 	list, err := s.Store.ListTransactions(r.Context(), userID)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
@@ -568,8 +694,24 @@ func (s *Server) postReview(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if rev.TransactionID != "" {
-		ok, _ := s.Store.HasUserSoldAt(r.Context(), claims.UserID, rev.FacilityID)
+		ok, err := s.Store.HasUserSoldAt(
+			r.Context(),
+			claims.UserID,
+			rev.FacilityID,
+			rev.TransactionID,
+		)
+		if err != nil {
+			http.Error(w, `{"error":"failed to verify transaction"}`, http.StatusInternalServerError)
+			return
+		}
 		rev.Verified = ok
+
+		if !ok {
+			http.Error(w, `{"error":"transaction is not valid for this user and facility"}`, http.StatusForbidden)
+			return
+		}
+	} else {
+		rev.Verified = false
 	}
 	saved, err := s.Store.SaveReview(r.Context(), rev)
 	if err != nil {
@@ -581,11 +723,16 @@ func (s *Server) postReview(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) uploadReceipt(w http.ResponseWriter, r *http.Request) {
+	claims := claimsFrom(r.Context())
+	if claims == nil || claims.UserID == "" {
+		http.Error(w, `{"error":"unauthorized"}`, http.StatusUnauthorized)
+		return
+	}
 	if s.Files == nil {
 		http.Error(w, `{"error":"storage unavailable"}`, 503)
 		return
 	}
-	if err := r.ParseMultipartForm(8 << 20); err != nil {
+	if err := r.ParseMultipartForm(5 << 20); err != nil { // 5MB limit
 		http.Error(w, `{"error":"invalid multipart"}`, 400)
 		return
 	}
@@ -595,8 +742,20 @@ func (s *Server) uploadReceipt(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer file.Close()
-	body, _ := io.ReadAll(io.LimitReader(file, 8<<20))
-	key, err := s.Files.PutReceipt(r.Context(), hdr.Filename, body, hdr.Header.Get("Content-Type"))
+
+	body, err := io.ReadAll(io.LimitReader(file, 5<<20+1))
+	if err != nil {
+		http.Error(w, `{"error":"failed to read file"}`, http.StatusBadRequest)
+		return
+	}
+
+	contentType := http.DetectContentType(body)
+	if contentType != "image/jpeg" && contentType != "image/png" && contentType != "application/pdf" {
+		http.Error(w, `{"error":"invalid file type, allowed: jpeg, png, pdf"}`, 400)
+		return
+	}
+
+	key, err := s.Files.PutReceipt(r.Context(), claims.UserID, hdr.Filename, body, contentType)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
