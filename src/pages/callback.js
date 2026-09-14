@@ -21,14 +21,14 @@ export async function initCallbackEvents(params = {}) {
   const error = params.error || searchParams.get('error');
   
   if (error) {
-    showToast(`LINE Login failed: ${params.error_description || searchParams.get('error_description') || error}`, 'error');
+    alert(`LINE Login failed: ${params.error_description || searchParams.get('error_description') || error}`);
     navigate('/login');
     return;
   }
 
   const storedState = sessionStorage.getItem('line_oauth_state');
   if (state !== storedState) {
-    showToast('Security Error: Invalid state parameter. Please try logging in again.', 'error');
+    alert(`Security Error: Invalid state parameter.\nExpected: ${storedState}\nReceived: ${state}`);
     navigate('/login');
     return;
   }
@@ -50,15 +50,16 @@ export async function initCallbackEvents(params = {}) {
         showToast(`ยินดีต้อนรับคุณ ${data.profile.displayName}`, 'success');
         navigate('/dashboard');
       } else {
-        showToast('Authentication failed on server. ' + (data.error || ''), 'error');
+        alert('Authentication failed on server.\nError: ' + (data.error || 'Unknown error') + '\n\nเช็คที่ Render Backend ว่าตั้งค่า LINE_CHANNEL_SECRET หรือยัง?');
         navigate('/login');
       }
     } catch (err) {
       console.error('Error during LINE token exchange:', err);
-      showToast('Network or server error during authentication.', 'error');
+      alert('Network or server error during authentication.\nMessage: ' + err.message + '\n\nเช็คที่ Render Backend ว่าตั้งค่า CORS_ORIGINS ถูกต้องหรือไม่');
       navigate('/login');
     }
   } else {
+    alert('Missing code parameter from LINE.\nURL: ' + window.location.href);
     navigate('/login');
   }
 }
