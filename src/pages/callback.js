@@ -14,14 +14,14 @@ export function renderCallback() {
   `;
 }
 
-export async function initCallbackEvents() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const code = urlParams.get('code');
-  const state = urlParams.get('state');
-  const error = urlParams.get('error');
+export async function initCallbackEvents(params = {}) {
+  const searchParams = new URLSearchParams(window.location.search);
+  const code = params.code || searchParams.get('code');
+  const state = params.state || searchParams.get('state');
+  const error = params.error || searchParams.get('error');
   
   if (error) {
-    showToast(`LINE Login failed: ${urlParams.get('error_description') || error}`, 'error');
+    showToast(`LINE Login failed: ${params.error_description || searchParams.get('error_description') || error}`, 'error');
     navigate('/login');
     return;
   }

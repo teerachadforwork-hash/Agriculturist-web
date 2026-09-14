@@ -37,7 +37,7 @@ async function renderPage(pageName, contentFn, initFn, params = {}) {
   `;
 
   if (needsNav) initNavbarEvents();
-  if (initFn) initFn();
+  if (initFn) initFn(params);
 }
 
 // ── Auth Guard ──
